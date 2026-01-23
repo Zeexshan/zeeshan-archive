@@ -9,7 +9,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: movies = [], isLoading, error } = useQuery<Movie[]>({
-    queryKey: ["/api/movies"],
+    queryKey: ["/movies.json"],
   });
 
   if (isLoading) {
