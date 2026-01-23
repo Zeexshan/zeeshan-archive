@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import Fuse from "fuse.js";
 import { MovieCard } from "./MovieCard";
 import type { Movie } from "@shared/schema";
 
@@ -7,9 +9,25 @@ interface MovieGridProps {
 }
 
 export function MovieGrid({ movies, searchQuery }: MovieGridProps) {
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Initialize Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    return new Fuse(movies, {
+      keys: ["title"],
+      threshold: 0.4, // 0.0 = exact match, 1.0 = match anything
+      includeScore: true,
+      ignoreLocation: true,
+      minMatchCharLength: 2,
+    });
+  }, [movies]);
+
+  // Get filtered movies using fuzzy search
+  const filteredMovies = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return movies;
+    }
+    const results = fuse.search(searchQuery);
+    return results.map((result) => result.item);
+  }, [fuse, movies, searchQuery]);
 
   if (movies.length === 0) {
     return (
