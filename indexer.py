@@ -23,7 +23,7 @@ CHANNEL_ID = -1003686417406
 CHANNEL_LINK_ID = "3686417406"
 
 # Output file
-OUTPUT_FILE = "movies.json"
+OUTPUT_FILE = "client/public/movies.json"
 
 
 def clean_filename(filename: str) -> str:
