@@ -128,7 +128,7 @@ async def scan_channel():
         print("Please set them in Replit Secrets.")
         return
     
-    print(f"Connecting to Telegram...")
+    print("Connecting to Telegram...")
     
     # Create Pyrogram client
     app = Client(
@@ -141,7 +141,17 @@ async def scan_channel():
     movies = []
     
     async with app:
-        print(f"Connected! Scanning channel {CHANNEL_ID}...")
+        print("Connected!")
+        
+        # IMPORTANT: First sync dialogs to cache all peer IDs
+        # This fixes the "Peer id invalid" error
+        print("Syncing dialogs to cache peer IDs...")
+        dialog_count = 0
+        async for dialog in app.get_dialogs():
+            dialog_count += 1
+        print(f"Synced {dialog_count} dialogs.")
+        
+        print(f"Scanning channel {CHANNEL_ID}...")
         
         message_count = 0
         media_count = 0
