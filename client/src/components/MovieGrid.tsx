@@ -1,0 +1,88 @@
+import { MovieCard } from "./MovieCard";
+import type { Movie } from "@shared/schema";
+
+interface MovieGridProps {
+  movies: Movie[];
+  searchQuery: string;
+}
+
+export function MovieGrid({ movies, searchQuery }: MovieGridProps) {
+  const filteredMovies = movies.filter((movie) =>
+    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (movies.length === 0) {
+    return (
+      <div
+        data-testid="empty-state-no-movies"
+        className="flex flex-col items-center justify-center py-20 text-center"
+      >
+        <div className="w-20 h-20 rounded-full bg-card flex items-center justify-center mb-4" data-testid="icon-container-empty">
+          <svg
+            className="w-10 h-10 text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            data-testid="icon-empty-film"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+            />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2" data-testid="text-empty-title">
+          No movies yet
+        </h3>
+        <p className="text-muted-foreground max-w-sm" data-testid="text-empty-description">
+          Run the indexer script to scan your Telegram channel and populate the archive.
+        </p>
+      </div>
+    );
+  }
+
+  if (filteredMovies.length === 0) {
+    return (
+      <div
+        data-testid="empty-state-no-results"
+        className="flex flex-col items-center justify-center py-20 text-center"
+      >
+        <div className="w-20 h-20 rounded-full bg-card flex items-center justify-center mb-4" data-testid="icon-container-search">
+          <svg
+            className="w-10 h-10 text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            data-testid="icon-search-empty"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2" data-testid="text-no-results-title">
+          No results found
+        </h3>
+        <p className="text-muted-foreground max-w-sm" data-testid="text-no-results-description">
+          Try searching with different keywords or check your spelling.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      data-testid="grid-movies"
+      className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"
+    >
+      {filteredMovies.map((movie, index) => (
+        <MovieCard key={`${movie.title}-${index}`} movie={movie} index={index} />
+      ))}
+    </div>
+  );
+}
