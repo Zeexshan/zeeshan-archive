@@ -1,0 +1,131 @@
+Here's a significantly refined and clearer prompt:
+
+---
+
+## **PROJECT OVERVIEW: Tele-Flix Archive**
+
+**Your Role:** Act as a senior full-stack engineer building a production-ready system.
+
+**Project Mission:** Develop a complete static website that transforms my private Telegram movie archive into a polished, Netflix-style browsing experience. This is a two-component system: a Python automation tool that builds the database, and a modern web interface that displays it beautifully.
+
+---
+
+## **PHASE 1: Python Channel Scanner & Data Generator**
+
+**Primary Objective:**
+Build an intelligent Python script named `indexer.py` that automatically scans my Telegram channel, extracts movie information, cleans the filenames intelligently, and outputs a structured JSON database.
+
+**Authentication & Configuration:**
+Retrieve the Telegram API ID and API Hash from environment variables using Python's environment variable system. These credentials will be securely stored in Replit's Secrets manager. The target channel is fixed and should be hardcoded to the channel ID: `-1003686417406` (note the negative sign and exact number).
+
+**Channel Scanning Process:**
+Connect to Telegram using the Pyrogram library. Navigate through the complete message history of the specified channel. Filter the messages to identify only those containing video files or document attachments, ignoring text-only messages, images, and other media types.
+
+**Data Extraction Requirements:**
+For each valid media file found, capture three essential pieces of information:
+- The file size in bytes, then convert it to a human-friendly format showing gigabytes with one decimal place (example: "1.4 GB")
+- The original filename exactly as it appears in Telegram's document or video attributes
+- Generate a direct Telegram link using this exact format: `https://t.me/c/3686417406/` followed by the message ID number (note: the channel ID here removes the `-100` prefix)
+
+**CRITICAL: Intelligent Filename Cleaning Function**
+
+This is the most important feature. My files follow anime/series naming conventions with excessive technical metadata. Here's the typical format:
+`Frieren.Beyond.Journeys.End.S01E01.The.Journeys.End.1080p.BluRay.x265.AAC.2.0-Pahe.in`
+
+Build a sophisticated cleaning algorithm that:
+
+**Step 1 - Series Name Extraction:**
+Identify the series title portion by finding where the season/episode pattern appears (formats like S01E01, S1E1, s02e15, etc.). Extract everything before this pattern. Replace all dots with spaces to create readable text.
+
+**Step 2 - Episode Preservation:**
+Keep the season and episode identifier intact (like S01E01 or S02E10) as this is crucial information for the user.
+
+**Step 3 - Metadata Removal:**
+Strip away all technical encoding details and release group tags. Common patterns to eliminate include: resolution indicators (1080p, 720p, 2160p, 4K), source types (BluRay, WEB-DL, HDTV, DVDRip), codec information (x265, x264, HEVC, H264, H265), audio formats (AAC, AC3, DTS, Atmos), bit depth (10bit, 8bit), release groups (Pahe.in, RARBG, YTS, YIFY), file extensions (mkv, mp4, avi), and any text following hyphens or brackets.
+
+**Step 4 - Final Formatting:**
+Combine the cleaned series name with the episode identifier using a dash separator. Ensure proper capitalization and spacing.
+
+**Expected Transformation:**
+Input: `Frieren.Beyond.Journeys.End.S01E01.The.Journeys.End.1080p.BluRay.x265.AAC.2.0-Pahe.in`
+Output: `Frieren Beyond Journeys End - S01E01`
+
+**Data Export:**
+Compile all processed movie entries into a file named `movies.json`. Structure it as a JSON array where each object contains the cleaned title, formatted file size, and direct Telegram link. Overwrite any existing file to ensure the catalog stays current.
+
+---
+
+## **PHASE 2: Netflix-Style Web Interface**
+
+**Primary Objective:**
+Create a stunning, responsive single-page website that feels like browsing Netflix, specifically designed to showcase my movie archive.
+
+**Visual Design System:**
+
+**Color Palette:**
+- Primary background: Deep charcoal shade (`#141414`) across the entire page
+- Text color: Pure white (`#ffffff`) for maximum readability
+- Accent color: Netflix's signature red (`#e50914`) for interactive elements like buttons
+- Secondary text: Light gray for file size indicators
+
+**Typography:**
+Use the Inter font family as the primary typeface, with system sans-serif fonts as the fallback option for faster loading.
+
+**Page Structure & Layout:**
+
+**Header Section:**
+Create a fixed header at the top of the page. Center-align a stylish logo or text that reads "Zeeshan Archive" with the Netflix red color. Below the title, place a large, prominent search bar that spans most of the header width. Style it with a semi-transparent dark background, subtle rounded corners, and a smooth focus animation that slightly enlarges the input field.
+
+**Movie Grid Display:**
+Design a responsive grid system that automatically adjusts based on screen size. On mobile devices, display three movie cards per row. On tablet screens, show four cards per row. On desktop monitors, expand to five cards per row. Add comfortable spacing between cards for a clean, organized appearance.
+
+**Individual Movie Card Design:**
+
+Each card should be a self-contained visual unit with these elements:
+- A placeholder movie poster image (use a generic film reel icon or solid dark gradient rectangle)
+- The cleaned movie title displayed prominently in bold white text, truncated with ellipsis if it exceeds two lines
+- The file size shown below the title in smaller, muted gray text
+- A vibrant Netflix-red download button at the bottom of the card with white text reading "Watch on Telegram"
+- Subtle hover effects: elevate the card slightly with a shadow and brighten the download button when the user hovers over it
+
+**Interactive Functionality:**
+
+**Initial Page Load:**
+When the website first loads, automatically fetch the `movies.json` file asynchronously. Parse the JSON data and dynamically generate all movie cards by creating HTML elements programmatically. Append these cards to the grid container in the order they appear in the JSON file.
+
+**Real-Time Search Filtering:**
+Attach an event listener to the search input field that triggers on every keystroke. Implement instant filtering logic that compares the user's search query against each movie title (case-insensitive comparison). Smoothly hide cards that don't match the search term and show only relevant results. Use CSS transitions for fade-in and fade-out effects to make the filtering feel smooth and responsive.
+
+**Download Button Behavior:**
+Each download button should function as a hyperlink (`<a>` tag) that points to the movie's Telegram link. Configure it to open in a new browser tab so users don't lose their place in the catalog.
+
+---
+
+## **PHASE 3: Project Infrastructure & Documentation**
+
+**Dependency Management:**
+Ensure the project automatically installs two essential Python libraries: Pyrogram for Telegram API communication and TGCrypto for enhanced encryption performance during file transfers.
+
+**Execution Configuration:**
+Create a Replit configuration file or a simple bash script named `run.sh` that makes it effortless to execute the indexer. The script should simply run the command to execute the Python indexer file, making catalog updates a one-click process.
+
+**User Documentation:**
+Write a comprehensive README markdown file that explains the entire project. Include these sections:
+
+- **Project Overview**: Brief description of what this archive does
+- **Setup Instructions**: Step-by-step guide on obtaining Telegram API credentials and adding them to Replit Secrets
+- **Running the Indexer**: Clear instructions on how to execute the script to refresh the movie database
+- **Updating the Catalog**: Explanation that users need to run the indexer script whenever new movies are added to the Telegram channel
+- **Customization Options**: Notes on how to modify the channel ID or adjust the filename cleaning patterns for different naming conventions
+
+**Security Reminders:**
+Include warnings never to commit the actual API credentials to the code repository. Emphasize that all sensitive data must live exclusively in environment variables or Replit Secrets.
+
+---
+
+**Final Deliverables Expected:**
+- A fully functional `indexer.py` script with intelligent filename processing
+- A polished `index.html` file with embedded CSS and JavaScript
+- A `movies.json` file generated by the indexer (can start empty)
+- A `README.md` documentation file
+- Proper dependency configuration for automatic library installation
