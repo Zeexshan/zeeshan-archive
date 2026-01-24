@@ -1,9 +1,9 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, real } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Movies table for the Telegram archive
+// Database table (for potential future use)
 export const movies = pgTable("movies", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
@@ -18,8 +18,44 @@ export const insertMovieSchema = createInsertSchema(movies).omit({
   id: true,
 });
 
+// Episode type - individual episode in a series
+export interface Episode {
+  title: string;
+  episodeId: string; // e.g., "S01E01"
+  size: string;
+  link: string;
+}
+
+// Standalone Movie type
+export interface Movie {
+  type: "movie";
+  id: string;
+  title: string;
+  size: string;
+  link: string;
+  poster: string | null;
+  overview: string | null;
+  rating: number | null;
+}
+
+// Series type - contains multiple episodes
+export interface Series {
+  type: "series";
+  id: string;
+  title: string;
+  poster: string | null;
+  overview: string | null;
+  rating: number | null;
+  episodeCount: number;
+  episodes: Episode[];
+}
+
+// Union type for archive items
+export type ArchiveItem = Movie | Series;
+
+// Legacy types for backward compatibility
 export type InsertMovie = z.infer<typeof insertMovieSchema>;
-export type Movie = typeof movies.$inferSelect;
+export type DbMovie = typeof movies.$inferSelect;
 
 // Array schema for validation
 export const moviesArraySchema = z.array(insertMovieSchema);

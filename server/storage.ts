@@ -1,9 +1,9 @@
-import { type Movie, type InsertMovie } from "@shared/schema";
+import { type ArchiveItem, type Movie, type Series } from "@shared/schema";
 import * as fs from "fs";
 import * as path from "path";
 
 export interface IStorage {
-  getMovies(): Promise<Movie[]>;
+  getItems(): Promise<ArchiveItem[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -15,7 +15,7 @@ export class MemStorage implements IStorage {
     this.publicMoviesFilePath = path.join(process.cwd(), "client/public/movies.json");
   }
 
-  async getMovies(): Promise<Movie[]> {
+  async getItems(): Promise<ArchiveItem[]> {
     try {
       // Try public folder first, then root folder for backward compatibility
       let filePath = this.publicMoviesFilePath;
@@ -25,20 +25,32 @@ export class MemStorage implements IStorage {
       
       if (fs.existsSync(filePath)) {
         const data = fs.readFileSync(filePath, "utf-8");
-        const rawMovies = JSON.parse(data);
-        if (!Array.isArray(rawMovies)) {
+        const rawItems = JSON.parse(data);
+        
+        if (!Array.isArray(rawItems)) {
           return [];
         }
-        // Map raw JSON to Movie type (add id if missing, include optional fields)
-        return rawMovies.map((m: InsertMovie, index: number) => ({
-          id: `movie-${index}`,
-          title: m.title,
-          size: m.size,
-          link: m.link,
-          poster: m.poster || null,
-          overview: m.overview || null,
-          rating: m.rating || null,
-        }));
+        
+        // Handle both new format (with type) and legacy format
+        return rawItems.map((item: any, index: number) => {
+          if (item.type === "series") {
+            return item as Series;
+          } else if (item.type === "movie") {
+            return item as Movie;
+          } else {
+            // Legacy format - treat as movie
+            return {
+              type: "movie" as const,
+              id: item.id || `movie-${index}`,
+              title: item.title,
+              size: item.size,
+              link: item.link,
+              poster: item.poster || null,
+              overview: item.overview || null,
+              rating: item.rating || null,
+            } as Movie;
+          }
+        });
       }
       return [];
     } catch (error) {

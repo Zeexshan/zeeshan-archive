@@ -3,14 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { MovieGrid } from "@/components/MovieGrid";
 import { LoadingState } from "@/components/LoadingState";
-import type { Movie } from "@shared/schema";
+import type { ArchiveItem } from "@shared/schema";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: movies = [], isLoading, error } = useQuery<Movie[]>({
-    queryKey: ["/movies.json"],
+  const { data: items = [], isLoading, error } = useQuery<ArchiveItem[]>({
+    queryKey: ["/api/movies"],
   });
+
+  // Count total items (series count as 1, not by episodes)
+  const totalItems = items.length;
 
   if (isLoading) {
     return <LoadingState />;
@@ -55,10 +58,10 @@ export default function Home() {
       <Header
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        totalMovies={movies.length}
+        totalMovies={totalItems}
       />
       <main className="max-w-7xl mx-auto px-4 py-6" data-testid="main-content">
-        <MovieGrid movies={movies} searchQuery={searchQuery} />
+        <MovieGrid items={items} searchQuery={searchQuery} />
       </main>
     </div>
   );

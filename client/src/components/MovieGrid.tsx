@@ -1,35 +1,36 @@
 import { useMemo } from "react";
 import Fuse from "fuse.js";
 import { MovieCard } from "./MovieCard";
-import type { Movie } from "@shared/schema";
+import { SeriesCard } from "./SeriesCard";
+import type { ArchiveItem, Movie, Series } from "@shared/schema";
 
 interface MovieGridProps {
-  movies: Movie[];
+  items: ArchiveItem[];
   searchQuery: string;
 }
 
-export function MovieGrid({ movies, searchQuery }: MovieGridProps) {
+export function MovieGrid({ items, searchQuery }: MovieGridProps) {
   // Initialize Fuse.js for fuzzy search
   const fuse = useMemo(() => {
-    return new Fuse(movies, {
+    return new Fuse(items, {
       keys: ["title"],
-      threshold: 0.4, // 0.0 = exact match, 1.0 = match anything
+      threshold: 0.4,
       includeScore: true,
       ignoreLocation: true,
       minMatchCharLength: 2,
     });
-  }, [movies]);
+  }, [items]);
 
-  // Get filtered movies using fuzzy search
-  const filteredMovies = useMemo(() => {
+  // Get filtered items using fuzzy search
+  const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) {
-      return movies;
+      return items;
     }
     const results = fuse.search(searchQuery);
     return results.map((result) => result.item);
-  }, [fuse, movies, searchQuery]);
+  }, [fuse, items, searchQuery]);
 
-  if (movies.length === 0) {
+  if (items.length === 0) {
     return (
       <div
         data-testid="empty-state-no-movies"
@@ -61,7 +62,7 @@ export function MovieGrid({ movies, searchQuery }: MovieGridProps) {
     );
   }
 
-  if (filteredMovies.length === 0) {
+  if (filteredItems.length === 0) {
     return (
       <div
         data-testid="empty-state-no-results"
@@ -98,9 +99,13 @@ export function MovieGrid({ movies, searchQuery }: MovieGridProps) {
       data-testid="grid-movies"
       className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"
     >
-      {filteredMovies.map((movie, index) => (
-        <MovieCard key={`${movie.title}-${index}`} movie={movie} index={index} />
-      ))}
+      {filteredItems.map((item, index) => {
+        const key = item.id || `item-${index}`;
+        if (item.type === "series") {
+          return <SeriesCard key={key} series={item as Series} index={index} />;
+        }
+        return <MovieCard key={key} movie={item as Movie} index={index} />;
+      })}
     </div>
   );
 }
