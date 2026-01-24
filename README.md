@@ -1,157 +1,133 @@
-# Tele-Flix Archive
+# Serverless Media Asset Management System
 
-A beautiful Netflix-style web interface for browsing your private Telegram movie archive. This project includes a Python automation tool that scans your Telegram channel and a modern React frontend for browsing.
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Stack](https://img.shields.io/badge/Stack-React_|_Python_|_GitHub_Actions-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Features
+A fully automated, zero-cost media streaming architecture that leverages Telegram as an infinite cloud storage backend. This project creates a Netflix-like experience by autonomously indexing raw files, normalizing metadata via heuristic algorithms, fetching rich assets from TMDB, and deploying a static React frontend.
 
-- **Netflix-inspired dark theme** - Beautiful, modern UI with a familiar feel
-- **Intelligent filename cleaning** - Automatically extracts clean titles from complex filenames
-- **Real-time search** - Instantly filter through your movie collection
-- **Responsive design** - Works beautifully on mobile, tablet, and desktop
-- **Direct Telegram links** - One-click access to watch/download from Telegram
+---
 
-## Project Components
+## 🏗 System Architecture
 
-### 1. Python Indexer (`indexer.py`)
-An intelligent script that:
-- Connects to your Telegram channel
-- Scans all messages for video files
-- Cleans messy filenames (e.g., `Frieren.Beyond.Journeys.End.S01E01.1080p.BluRay.x265-Pahe.in` → `Frieren Beyond Journeys End - S01E01`)
-- Exports a structured JSON database
+The system operates on a "Zero-Touch" pipeline. Once a file is uploaded to the secure storage channel, the entire process—from indexing to deployment—is automated via CI/CD.
 
-### 2. Web Interface
-A stunning Netflix-style single-page application that:
-- Displays your movie collection in a responsive grid
-- Provides instant search filtering
-- Links directly to Telegram for viewing
+```mermaid
+graph TD
+    A[Local Video File] -->|FFmpeg Smart Splitter| B(Telegram Private Channel)
+    B --> C{GitHub Actions Robot}
+    C -->|Cron Job Every 6h| D[Python Indexer]
+    D -->|Fetch Metadata| E[TMDB API]
+    D -->|Generate Database| F[movies.json]
+    F --> G[Netlify / Vercel]
+    G -->|Deploy| H[React Frontend]
+```
 
-## Setup Instructions
+---
 
-### Step 1: Get Telegram API Credentials
+## 🚀 Key Features
 
-1. Go to [https://my.telegram.org](https://my.telegram.org)
-2. Log in with your phone number
-3. Click on "API Development Tools"
-4. Create a new application (any name is fine)
-5. Note down your **API ID** and **API Hash**
+### 1. Zero-Cost Infrastructure
 
-### Step 2: Add Secrets to Replit
+- **Storage:** Utilizes Telegram's unlimited cloud storage for documents/files
+- **Compute:** Runs indexing scripts on GitHub Actions (Free Tier)
+- **Hosting:** Deploys the frontend via Netlify/Vercel (Free Tier)
 
-1. In your Replit project, click on "Secrets" (lock icon) in the left sidebar
-2. Add the following secrets:
-   - `TELEGRAM_API_ID` - Your numeric API ID
-   - `TELEGRAM_API_HASH` - Your API Hash string
+### 2. Intelligent "Anchor" Indexing
 
-### Step 3: Run the Indexer
+- **Problem:** Raw filenames are messy (e.g., `Movie.Name.2024.1080p.Multi.Audio.DD+.mkv`)
+- **Solution:** Developed a custom normalization algorithm using Regex
+- **Strategy:** Identifies the "Year Anchor" (e.g., 2024)
+- **Logic:** Extracts the title before the anchor and discards technical metadata after it
+- **Result:** Achieves near 100% match rate with the TMDB API
 
-There are two ways to run the indexer:
+### 3. Automated Large File Handling
 
-**Option A: Using the Shell**
+Telegram has a 2GB file limit. The solution:
+
+- Engineered a local Python/FFmpeg script (`splitter.py`) that:
+  - Analyzes video bitrate
+  - Mathematically calculates safe split points to target 1.5GB chunks
+  - Splits files without re-encoding (Stream Copy) to preserve 100% quality
+
+- **Frontend Logic:** The Indexer automatically detects "Part 1 / Part 2" files and groups them into a single Virtual Series Folder on the UI
+
+### 4. Self-Healing CI/CD Pipeline
+
+- The system runs on a Cron Job (every 6 hours)
+- If the Indexer crashes (e.g., API limits), the GitHub Action logs the error and retries in the next cycle
+- **Authentication:** Implemented "Dialog Sync" to cache Peer IDs, preventing `PeerIdInvalid` errors common in stateless environments
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** React, Vite, Tailwind CSS, Lucide Icons
+- **Backend / Scripting:** Python 3.10
+- **Libraries:**
+  - `Pyrogram` (Telegram MTProto Client)
+  - `Requests` (TMDB API Integration)
+  - `FFmpeg` (Video Processing)
+- **DevOps:** GitHub Actions (YAML Workflows), Git
+
+---
+
+## 📂 Project Structure
+
 ```bash
-./run.sh
+├── .github/workflows/   # CI/CD Automation scripts
+├── client/              # React Frontend application
+├── indexer.py           # The "Brain": Scans Telegram & builds JSON DB
+├── splitter.py          # Local tool for splitting 4K files
+├── movies.json          # Generated database (Single Source of Truth)
+└── README.md            # Documentation
 ```
 
-**Option B: Direct Python**
-```bash
-python indexer.py
-```
+---
 
-On first run, Pyrogram will ask you to authenticate with your Telegram account. Follow the prompts to enter your phone number and the verification code.
+## 🔧 Setup & Installation
 
-### Step 4: View Your Archive
+This project is designed to be self-hosted.
 
-Once the indexer completes, the web interface will automatically display your movies. Access it through the Replit webview or your deployment URL.
+### Prerequisites
 
-## Updating the Catalog
+1. Telegram API Keys: Get `API_ID` and `API_HASH` from [my.telegram.org](https://my.telegram.org)
+2. TMDB API Key: Register for a free developer key at [themoviedb.org](https://themoviedb.org)
+3. GitHub Account: To host the repo and run Actions
 
-Whenever you add new movies to your Telegram channel, simply run the indexer again:
+### Deployment Steps
 
-```bash
-./run.sh
-```
+1. Clone the Repo:
+   
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   ```
 
-This will rescan the channel and update `movies.json` with the latest content.
+2. Set Secrets in GitHub:
+   
+   Go to `Settings > Secrets and variables > Actions` and add:
+   - `TELEGRAM_API_ID`
+   - `TELEGRAM_API_HASH`
+   - `TELEGRAM_SESSION_STRING` (Generated via Pyrogram)
+   - `TMDB_API_KEY`
 
-## Customization
+3. Run the Indexer Locally (Optional):
+   
+   ```bash
+   pip install -r requirements.txt
+   python indexer.py
+   ```
 
-### Changing the Target Channel
+4. Push to Main:
+   
+   The GitHub Action defined in `.github/workflows/update.yml` will automatically trigger, scan your channel, and build the site.
 
-To scan a different Telegram channel, edit `indexer.py`:
+---
 
-```python
-# Change this line with your channel ID
-CHANNEL_ID = -1001234567890  # Your channel ID (with -100 prefix)
-CHANNEL_LINK_ID = "1234567890"  # Same ID without -100 prefix
-```
+## ⚠️ Disclaimer
 
-**How to get your channel ID:**
-1. Forward a message from your channel to [@userinfobot](https://t.me/userinfobot)
-2. The bot will reply with the channel ID
-3. Private channels have a `-100` prefix
+This project is a Proof of Concept (PoC) designed to demonstrate system architecture, automation, and API integration skills. It is intended for personal data management and educational purposes only. The developer is not responsible for any misuse of this software.
 
-### Filename Cleaning Patterns
+---
 
-The indexer intelligently cleans these patterns:
-- Season/Episode: `S01E01`, `s1e1`
-- Quality: `1080p`, `720p`, `4K`, `UHD`
-- Sources: `BluRay`, `WEB-DL`, `HDTV`
-- Codecs: `x265`, `HEVC`, `H.264`
-- Audio: `AAC`, `DTS`, `Atmos`
-- Release groups: `Pahe.in`, `RARBG`, `YTS`
-
-To add custom patterns, edit the `patterns_to_remove` list in `indexer.py`.
-
-## File Structure
-
-```
-├── indexer.py        # Telegram channel scanner
-├── run.sh            # Easy-run script for the indexer
-├── movies.json       # Generated movie database
-├── README.md         # This documentation
-├── client/           # React frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Header.tsx
-│   │   │   ├── MovieCard.tsx
-│   │   │   ├── MovieGrid.tsx
-│   │   │   └── LoadingState.tsx
-│   │   ├── pages/
-│   │   │   └── home.tsx
-│   │   └── App.tsx
-│   └── index.html
-├── server/           # Express backend
-│   ├── routes.ts     # API endpoints
-│   └── storage.ts    # Data access layer
-└── shared/
-    └── schema.ts     # TypeScript types
-```
-
-## Security Reminders
-
-- **Never commit API credentials** to your code repository
-- **Keep secrets in environment variables** using Replit Secrets
-- **Private channels are protected** - only channel members can access the links
-
-## Troubleshooting
-
-### "TELEGRAM_API_ID or TELEGRAM_API_HASH not found"
-Make sure you've added both secrets in Replit's Secrets panel.
-
-### "Channel not found" or "Access denied"
-1. Ensure you're a member of the channel
-2. Verify the channel ID is correct (with `-100` prefix for private channels)
-3. Check that your Telegram account has access to the channel
-
-### "Session expired"
-Delete the `tele_flix_session.session` file and run the indexer again to re-authenticate.
-
-## Tech Stack
-
-- **Frontend**: React, TypeScript, TailwindCSS, Tanstack Query
-- **Backend**: Express.js, TypeScript
-- **Indexer**: Python, Pyrogram, TGCrypto
-- **Styling**: Netflix-inspired dark theme with Inter font
-
-## License
-
-This project is for personal use only. Respect copyright laws and only use this for content you have rights to access.
+*Built with ❤️ by Zeeshan Khan*
