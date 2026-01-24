@@ -41,4 +41,8 @@ waitForPort = 5000
 [userenv]
 
 [userenv.shared]
+<<<<<<< Updated upstream
 TMDB_API_KEY = "cd9b23373783387f6c5a726936f45666"
+=======
+TELEGRAM_SESSION_STRING = "BQIYVM8Ag7R2cpstYofEiKJA0X3C0SZAvIFbvagPD_LacBKuDFwQvo1iwx85GyI-U-aUUHwgBAq9zDhFEs1xnYqAWXpgl613pKUgjicaYFHYMyz_Ndq00klDOPwjKuVQqyYNTLSRRecQfeRF1IpVQXpn5e3YTXh4ovNIzw-Vuy5hljgFN8-8rK4R84MkN8SnMKupkDBz2rg_i3gxawf9ma9jBbFfozEYoubnhh52uUTTtKpkatlEa941YKdJoxbJYT7wJxgtvvnGENLbQlmx3PzCRHIltXlkQ_1A21uVfR_i8MzCUFBeVFtZF4cTYyQrNaCVwtFfVcMN9hoR_vp6hmDO4mlzMgAAAABj9VCbAA"
+>>>>>>> Stashed changes
