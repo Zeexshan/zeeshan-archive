@@ -4,10 +4,13 @@ import { Input } from "@/components/ui/input";
 interface HeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  totalMovies: number;
+  totalMovies?: number;
 }
 
-export function Header({ searchQuery, onSearchChange, totalMovies }: HeaderProps) {
+export function Header({ searchQuery, onSearchChange, totalMovies = 0 }: HeaderProps) {
+  // SAFETY CHECK: Ensure totalMovies is a valid number
+  const safeTotal = typeof totalMovies === "number" && !isNaN(totalMovies) ? totalMovies : 0;
+
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-4">
@@ -23,12 +26,12 @@ export function Header({ searchQuery, onSearchChange, totalMovies }: HeaderProps
               <span className="text-foreground"> Archive</span>
             </h1>
           </div>
-          {totalMovies > 0 && (
+          {safeTotal > 0 && (
             <p
               data-testid="text-movie-count"
               className="text-sm text-muted-foreground"
             >
-              {totalMovies} {totalMovies === 1 ? 'title' : 'titles'} available
+              {safeTotal} {safeTotal === 1 ? 'title' : 'titles'} available
             </p>
           )}
         </div>

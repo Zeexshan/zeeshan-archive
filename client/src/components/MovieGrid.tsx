@@ -10,27 +10,31 @@ interface MovieGridProps {
 }
 
 export function MovieGrid({ items, searchQuery }: MovieGridProps) {
+  // SAFETY CHECK: Ensure items is an array
+  const safeItems = Array.isArray(items) ? items : [];
+
   // Initialize Fuse.js for fuzzy search
   const fuse = useMemo(() => {
-    return new Fuse(items, {
+    return new Fuse(safeItems, {
       keys: ["title"],
       threshold: 0.4,
       includeScore: true,
       ignoreLocation: true,
       minMatchCharLength: 2,
     });
-  }, [items]);
+  }, [safeItems]);
 
   // Get filtered items using fuzzy search
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) {
-      return items;
+      return safeItems;
     }
     const results = fuse.search(searchQuery);
     return results.map((result) => result.item);
-  }, [fuse, items, searchQuery]);
+  }, [fuse, safeItems, searchQuery]);
 
-  if (items.length === 0) {
+  // Early return if no items
+  if (!safeItems || safeItems.length === 0) {
     return (
       <div
         data-testid="empty-state-no-movies"
@@ -100,8 +104,8 @@ export function MovieGrid({ items, searchQuery }: MovieGridProps) {
       className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"
     >
       {filteredItems.map((item, index) => {
-        const key = item.id || `item-${index}`;
-        if (item.type === "series") {
+        const key = item?.id || `item-${index}`;
+        if (item?.type === "series") {
           return <SeriesCard key={key} series={item as Series} index={index} />;
         }
         return <MovieCard key={key} movie={item as Movie} index={index} />;
