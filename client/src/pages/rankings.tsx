@@ -105,9 +105,7 @@ export default function Rankings() {
         const reader = new FileReader();
         reader.onload = (ev) => {
           const content = ev.target?.result as string;
-          if (importData(content)) {
-            window.location.reload();
-          }
+          importData(content);
         };
         reader.readAsText(file);
       }

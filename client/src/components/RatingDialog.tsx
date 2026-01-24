@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import type { WatchStatus, TrackedMedia } from "@/hooks/useUserMedia";
 
@@ -62,6 +63,7 @@ export function RatingDialog({
   const [rating, setRating] = useState<number | null>(null);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [review, setReview] = useState("");
+  const [showRatingError, setShowRatingError] = useState(false);
 
   useEffect(() => {
     if (existingData) {
@@ -73,9 +75,15 @@ export function RatingDialog({
       setRating(null);
       setReview("");
     }
+    setShowRatingError(false);
   }, [existingData, isOpen]);
 
   const handleSave = () => {
+    if (status === "completed" && rating === null) {
+      setShowRatingError(true);
+      return;
+    }
+    
     const data: TrackedMedia = {
       status,
       rating: status === "completed" ? rating : null,
@@ -95,6 +103,11 @@ export function RatingDialog({
     }
   };
 
+  const handleStatusChange = (newStatus: WatchStatus) => {
+    setStatus(newStatus);
+    setShowRatingError(false);
+  };
+
   const displayRating = hoverRating ?? rating;
 
   return (
@@ -112,7 +125,9 @@ export function RatingDialog({
             <DialogTitle className="text-lg leading-tight line-clamp-2" data-testid="dialog-title">
               {mediaTitle}
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">Track your progress</p>
+            <DialogDescription className="text-sm text-muted-foreground mt-1">
+              Track your progress and add ratings
+            </DialogDescription>
           </div>
         </DialogHeader>
 
@@ -128,7 +143,7 @@ export function RatingDialog({
                 return (
                   <button
                     key={option.value}
-                    onClick={() => setStatus(option.value)}
+                    onClick={() => handleStatusChange(option.value)}
                     data-testid={`button-status-${option.value}`}
                     className={`flex items-center gap-2 p-2.5 rounded-md border-2 transition-all ${
                       isSelected
@@ -147,6 +162,7 @@ export function RatingDialog({
           <div className={status !== "completed" ? "opacity-50 pointer-events-none" : ""}>
             <label className="text-sm font-medium text-foreground mb-2 block">
               Rating {status !== "completed" && <span className="text-muted-foreground font-normal">(Complete to rate)</span>}
+              {status === "completed" && <span className="text-destructive font-normal ml-1">*</span>}
             </label>
             <div className="flex items-center gap-1 mb-1">
               {Array.from({ length: 10 }, (_, i) => i + 1).map((star) => (
@@ -154,7 +170,10 @@ export function RatingDialog({
                   key={star}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(null)}
-                  onClick={() => setRating(star)}
+                  onClick={() => {
+                    setRating(star);
+                    setShowRatingError(false);
+                  }}
                   data-testid={`button-star-${star}`}
                   className="p-0.5 transition-transform hover:scale-110"
                   disabled={status !== "completed"}
@@ -174,6 +193,11 @@ export function RatingDialog({
                 <span className="font-medium text-foreground">{displayRating}/10</span>
                 {" - "}
                 {ratingLabels[displayRating]}
+              </div>
+            )}
+            {showRatingError && (
+              <div className="text-sm text-destructive mt-1" data-testid="rating-error">
+                Please select a rating to mark as completed
               </div>
             )}
           </div>
