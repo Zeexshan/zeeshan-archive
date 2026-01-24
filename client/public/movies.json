@@ -1,8 +1,18 @@
 [
   {
-    "type": "series",
+    "type": "movie",
     "id": "content-0",
-    "title": "My Hero Academia You're Next 2024",
+    "title": "The Garden of Words",
+    "size": "1.1 GB",
+    "link": "https://t.me/c/3686417406/67",
+    "poster": "https://image.tmdb.org/t/p/w500/mXUCVq3HMtS4Y9IQ8vmEOPyN0vH.jpg",
+    "overview": "Takao, who is training to become a shoemaker, skipped school and is sketching shoes in a Japanese-style garden. He meets a mysterious woman, Yukino, who is older than him. Then, without arranging the times, the two start to see each other again and again, but only on rainy days. They deepen their relationship and open up to each other. But the end of the rainy season soon approaches.",
+    "rating": 7.58
+  },
+  {
+    "type": "series",
+    "id": "content-1",
+    "title": "My Hero Academia You're Next",
     "poster": "https://image.tmdb.org/t/p/w500/tTrI6PwqzxkgO3dvQ7BEKXM7SYR.jpg",
     "overview": "In a society devastated by the effects of an all-out war between heroes and villains, a mysterious giant fortress suddenly appears, engulfing towns and people one after another. Then, a man reminiscent of All Might, the 'symbol of peace', stands in front of Izuku and his friends...",
     "rating": 7.223,
@@ -36,8 +46,8 @@
   },
   {
     "type": "series",
-    "id": "content-1",
-    "title": "Your Name 2016",
+    "id": "content-2",
+    "title": "Your Name",
     "poster": "https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg",
     "overview": "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places. Mitsuha wakes up in Taki’s body, and he in hers. This bizarre occurrence continues to happen randomly, and the two must adjust their lives around each other.",
     "rating": 8.478,
@@ -59,11 +69,11 @@
   },
   {
     "type": "series",
-    "id": "content-2",
+    "id": "content-3",
     "title": "Cowboy Bebop",
     "poster": "https://image.tmdb.org/t/p/w500/xDiXDfZwC6XYC6fxHI1jl3A3Ill.jpg",
     "overview": "In 2071, roughly fifty years after an accident with a hyperspace gateway made the Earth almost uninhabitable, humanity has colonized most of the rocky planets and moons of the Solar System. Amid a rising crime rate, the Inter Solar System Police (ISSP) set up a legalized contract system, in which registered bounty hunters, also referred to as \"Cowboys\", chase criminals and bring them in alive in return for a reward.",
-    "rating": 8.516,
+    "rating": 8.5,
     "episodes": [
       {
         "title": "Cowboy Bebop E19 Wild Horses 1080p BluRay x264 DD5.1-Pahe.in.mkv",
@@ -226,17 +236,17 @@
   },
   {
     "type": "movie",
-    "id": "content-3",
+    "id": "content-4",
     "title": "Angel's Egg",
     "size": "1.7 GB",
     "link": "https://t.me/c/3686417406/31",
     "poster": "https://image.tmdb.org/t/p/w500/dcEUGvckbePFzPKhGXnS9T3kZMG.jpg",
     "overview": "In the ruins of a strange city, a young girl takes care of a large egg she holds carefully in her arms. She bonds with a boy who is searching for a bird he saw in a dream.",
-    "rating": 7.7
+    "rating": 7.731
   },
   {
     "type": "series",
-    "id": "content-4",
+    "id": "content-5",
     "title": "Frieren Beyond Journeys End",
     "poster": "https://image.tmdb.org/t/p/w500/dqZENchTd7lp5zht7BdlqM7RBhD.jpg",
     "overview": "Decades after her party defeated the Demon King, an old friend's funeral launches the elf wizard Frieren on a journey of self-discovery.",
