@@ -119,13 +119,42 @@ def parse_filename(filename: str) -> dict:
     # Remove file extension first
     filename = re.sub(r'\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v)$', '', filename, flags=re.IGNORECASE)
     
-    # Try to find season/episode pattern
+    # Try to find season/episode pattern (S01E01)
     season_episode_match = re.search(r'[.\s_-](S\d{1,2}E\d{1,2})[.\s_-]?', filename, re.IGNORECASE)
     
     if season_episode_match:
-        # This is a series episode
+        # This is a series episode with season
         series_part = filename[:season_episode_match.start()]
         episode_id = season_episode_match.group(1).upper()
+        
+        # Clean the series name
+        series_name = re.sub(r'[._]+', ' ', series_part).strip()
+        series_name = re.sub(r'\s*[-–]+\s*$', '', series_name).strip()
+        series_name = ' '.join(word.capitalize() for word in series_name.split())
+        
+        return {
+            "title": f"{series_name} - {episode_id}",
+            "episode_id": episode_id,
+            "is_series": True,
+            "clean_title": series_name
+        }
+    
+    # Try to find episode-only pattern (E01, E16, Episode 1, Episode 01)
+    episode_only_match = re.search(r'[.\s_-](E(\d{1,3}))[.\s_-]', filename, re.IGNORECASE)
+    if not episode_only_match:
+        episode_only_match = re.search(r'[.\s_-]Episode\s*(\d{1,3})[.\s_-]?', filename, re.IGNORECASE)
+    
+    if episode_only_match:
+        # This is a series episode without explicit season
+        series_part = filename[:episode_only_match.start()]
+        
+        # Extract episode number
+        if 'Episode' in episode_only_match.group(0):
+            ep_num = episode_only_match.group(1)
+        else:
+            ep_num = episode_only_match.group(2)
+        
+        episode_id = f"E{int(ep_num):02d}"
         
         # Clean the series name
         series_name = re.sub(r'[._]+', ' ', series_part).strip()
