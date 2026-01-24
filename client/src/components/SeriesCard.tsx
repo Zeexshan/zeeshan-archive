@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Folder, Star, Play, ExternalLink, X } from "lucide-react";
+import { Folder, Star, Play, ExternalLink, ListPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,6 +8,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { StatusBadge } from "@/components/StatusBadge";
+import { RatingDialog } from "@/components/RatingDialog";
+import { useUserMedia } from "@/hooks/useUserMedia";
 import type { Series } from "@shared/schema";
 
 interface SeriesCardProps {
@@ -17,7 +20,11 @@ interface SeriesCardProps {
 
 export function SeriesCard({ series, index }: SeriesCardProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const safeId = `series-${index}`;
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const { getTrackedData, saveTrackedData, deleteTrackedData } = useUserMedia();
+  
+  const safeId = series.id || `series-${index}`;
+  const trackedData = getTrackedData(safeId);
 
   return (
     <>
@@ -26,13 +33,10 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
         className="movie-card-hover bg-card rounded-md flex flex-col group cursor-pointer"
         onClick={() => setIsOpen(true)}
       >
-        {/* Stacked folder appearance */}
         <div className="aspect-[2/3] rounded-t-md relative overflow-hidden">
-          {/* Background stack effect */}
           <div className="absolute inset-0 translate-x-1 -translate-y-1 bg-zinc-700/50 rounded-t-md" />
           <div className="absolute inset-0 translate-x-0.5 -translate-y-0.5 bg-zinc-600/50 rounded-t-md" />
           
-          {/* Main poster */}
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-t-md overflow-hidden">
             {series.poster ? (
               <img
@@ -49,7 +53,7 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             )}
           </div>
           
-          {/* Rating badge */}
+          {/* TMDB Rating badge */}
           {series.rating && series.rating > 0 && (
             <div
               data-testid={`badge-rating-${safeId}`}
@@ -60,7 +64,13 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             </div>
           )}
           
-          {/* Episode count badge */}
+          {/* User tracking status badge */}
+          {trackedData && (
+            <div className="absolute top-2 left-2 z-10" data-testid={`badge-tracking-${safeId}`}>
+              <StatusBadge status={trackedData.status} rating={trackedData.rating} />
+            </div>
+          )}
+          
           <div
             data-testid={`badge-episodes-${safeId}`}
             className="absolute bottom-2 left-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-md z-10"
@@ -70,11 +80,9 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             </span>
           </div>
           
-          {/* Gradient overlay */}
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent z-[5]" />
         </div>
 
-        {/* Content section */}
         <div className="p-3 flex flex-col gap-2 flex-1">
           <h3
             data-testid={`text-title-${safeId}`}
@@ -92,14 +100,30 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             Series
           </span>
 
-          <Button
-            className="w-full gap-2 mt-auto"
-            size="sm"
-            data-testid={`button-view-${safeId}`}
-          >
-            <Play className="w-3.5 h-3.5" />
-            <span>View Episodes</span>
-          </Button>
+          <div className="mt-auto flex flex-col gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full gap-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsRatingOpen(true);
+              }}
+              data-testid={`button-track-${safeId}`}
+            >
+              <ListPlus className="w-3.5 h-3.5" />
+              <span>{trackedData ? "Update" : "Track"}</span>
+            </Button>
+            
+            <Button
+              className="w-full gap-2"
+              size="sm"
+              data-testid={`button-view-${safeId}`}
+            >
+              <Play className="w-3.5 h-3.5" />
+              <span>View Episodes</span>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -150,6 +174,18 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
           </ScrollArea>
         </DialogContent>
       </Dialog>
+
+      {/* Rating Dialog */}
+      <RatingDialog
+        isOpen={isRatingOpen}
+        onClose={() => setIsRatingOpen(false)}
+        mediaId={safeId}
+        mediaTitle={series.title}
+        mediaPoster={series.poster}
+        existingData={trackedData}
+        onSave={saveTrackedData}
+        onDelete={deleteTrackedData}
+      />
     </>
   );
 }
