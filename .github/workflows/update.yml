@@ -33,9 +33,15 @@ jobs:
         git config --global user.name "Updater Bot"
         git config --global user.email "bot@noreply.github.com"
         
-        # FIX: Discard changes to the session file so it doesn't block the commit
-        git checkout -- tele_flix_session.session || true
-        
+        # 1. Force add ONLY the movies file (Ignore session file)
         git add client/public/movies.json
-        # Only commit if movies.json actually changed
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update movie list" && git push)
+        
+        # 2. Check if there are actually changes staged to be committed
+        # git diff --cached --quiet returns 1 if there are changes, 0 if empty
+        if ! git diff --cached --quiet; then
+          echo "Changes detected. Committing..."
+          git commit -m "Auto-update movie list"
+          git push
+        else
+          echo "No changes to movies.json. Skipping commit."
+        fi
