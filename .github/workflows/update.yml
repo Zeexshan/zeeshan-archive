@@ -1,9 +1,6 @@
 name: Update Movie List
 
 on:
-  schedule:
-    # Run daily at midnight UTC
-    - cron: '0 0 * * *'
   workflow_dispatch:  # This makes the button appear
 
 jobs:
@@ -12,23 +9,22 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
-        pip install pyrogram tgcrypto requests
+        pip install pyrogram tgcrypto
 
     - name: Run Indexer
       env:
         TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
         TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
         TELEGRAM_SESSION_STRING: ${{ secrets.TELEGRAM_SESSION_STRING }}
-        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: python indexer.py
 
     - name: Commit and Push changes
