@@ -5,3 +5,13 @@ server/public
 vite.config.ts.*
 *.tar.gz
 *.session
+# Auto Splitter - Ignore heavy video files
+tools/auto-splitter/input/*
+tools/auto-splitter/output/*
+
+# But keep the folders themselves (so Git tracks them)
+!tools/auto-splitter/input/.gitkeep
+!tools/auto-splitter/output/.gitkeeptools/auto-splitter/*.exe
+# Add a newline just in case, then re-add the rule
+echo "" >> .gitignore
+echo "tools/auto-splitter/*.exe" >> .gitignore
