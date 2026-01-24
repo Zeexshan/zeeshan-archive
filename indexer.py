@@ -4,7 +4,7 @@ Tele-Flix Archive Indexer
 -------------------------
 Scans a Telegram channel and extracts movie information into a JSON database.
 Fetches movie posters, overviews, and ratings from TMDB.
-Groups series episodes into folder structures.
+Groups series episodes and split movie parts into folder structures.
 """
 
 import os
@@ -106,15 +106,72 @@ def search_tmdb(title: str, is_series: bool = False) -> dict:
     return {}
 
 
+def clean_title_for_search(title: str) -> str:
+    """
+    Clean a title for TMDB search by removing:
+    - Split file suffixes (_part001, part1, _pt1, cd1, disc1)
+    - Quality tags, release group names, etc.
+    """
+    cleaned = title
+    
+    # Remove split file suffixes (case insensitive)
+    # Patterns: _part001, .part1, -part01, part 1, _pt1, cd1, disc1
+    split_patterns = [
+        r'[._\s-]?part\s?\d+',      # part1, part 1, _part001, .part01
+        r'[._\s-]?pt\s?\d+',         # pt1, _pt01
+        r'[._\s-]?cd\s?\d+',         # cd1, _cd01
+        r'[._\s-]?disc\s?\d+',       # disc1, _disc01
+        r'[._\s-]?disk\s?\d+',       # disk1, _disk01
+    ]
+    
+    for pattern in split_patterns:
+        cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
+    
+    # Remove quality tags and release group names
+    quality_patterns = [
+        r'[\.\s_-]?(2160p|1080p|720p|480p|4K|UHD|HD|SD)',
+        r'[\.\s_-]?(BluRay|Blu-Ray|BDRip|BRRip|WEB-DL|WEBRip|HDTV|DVDRip|HDRip|CAM|TS|TC|DVDSCR)',
+        r'[\.\s_-]?(x265|x264|HEVC|H\.?265|H\.?264|AVC|XviD|DivX|VP9|AV1)',
+        r'[\.\s_-]?(AAC|AC3|DTS|DTS-HD|Atmos|TrueHD|FLAC|MP3|DD5\.1|5\.1|7\.1|2\.0)',
+        r'[\.\s_-]?(10bit|10-bit|8bit|8-bit|HDR|HDR10|Dolby Vision|DV)',
+        r'[\.\s_-]?(Pahe\.in|RARBG|YTS|YIFY|MX|SPARKS|GECKOS|AMIABLE|FGT|EVO|STUTTERSHIT)',
+        r'[\.\s_-]?(FLUX|NTb|MIXED|SMURF|TOMMY|ION10|DEFLATE|SPARKS|MZABI)',
+        r'\[.*?\]',
+        r'\(.*?\)',
+        r'\s*[-–]\s*[A-Za-z0-9]+$',
+        r'[\(\[]?\d{4}[\)\]]?',
+    ]
+    
+    for pattern in quality_patterns:
+        cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
+    
+    # Clean up separators and whitespace
+    cleaned = re.sub(r'[._]+', ' ', cleaned)
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    cleaned = re.sub(r'\s*[-–]+\s*$', '', cleaned).strip()
+    
+    if cleaned:
+        cleaned = ' '.join(word.capitalize() for word in cleaned.split())
+    
+    return cleaned if cleaned else title
+
+
 def parse_filename(filename: str) -> dict:
     """
-    Parse a filename and extract title, episode info, and determine if it's a series.
+    Parse a filename and extract title, episode/part info, and determine type.
     
     Returns:
-        dict with keys: title, episode_id, is_series, clean_title
+        dict with keys: title, episode_id, is_series, is_split, clean_title, part_number
     """
     if not filename:
-        return {"title": "Unknown Title", "episode_id": None, "is_series": False, "clean_title": "Unknown Title"}
+        return {
+            "title": "Unknown Title",
+            "episode_id": None,
+            "is_series": False,
+            "is_split": False,
+            "clean_title": "Unknown Title",
+            "part_number": None
+        }
     
     # Remove file extension first
     filename = re.sub(r'\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v)$', '', filename, flags=re.IGNORECASE)
@@ -136,7 +193,9 @@ def parse_filename(filename: str) -> dict:
             "title": f"{series_name} - {episode_id}",
             "episode_id": episode_id,
             "is_series": True,
-            "clean_title": series_name
+            "is_split": False,
+            "clean_title": series_name,
+            "part_number": None
         }
     
     # Try to find episode-only pattern (E01, E16, Episode 1, Episode 01)
@@ -165,42 +224,46 @@ def parse_filename(filename: str) -> dict:
             "title": f"{series_name} - {episode_id}",
             "episode_id": episode_id,
             "is_series": True,
-            "clean_title": series_name
+            "is_split": False,
+            "clean_title": series_name,
+            "part_number": None
         }
     
-    # Not a series - clean as a movie title
-    patterns_to_remove = [
-        r'[\.\s_-]?(2160p|1080p|720p|480p|4K|UHD|HD|SD)',
-        r'[\.\s_-]?(BluRay|Blu-Ray|BDRip|BRRip|WEB-DL|WEBRip|HDTV|DVDRip|HDRip|CAM|TS|TC|DVDSCR)',
-        r'[\.\s_-]?(x265|x264|HEVC|H\.?265|H\.?264|AVC|XviD|DivX|VP9|AV1)',
-        r'[\.\s_-]?(AAC|AC3|DTS|DTS-HD|Atmos|TrueHD|FLAC|MP3|DD5\.1|5\.1|7\.1|2\.0)',
-        r'[\.\s_-]?(10bit|10-bit|8bit|8-bit|HDR|HDR10|Dolby Vision|DV)',
-        r'[\.\s_-]?(Pahe\.in|RARBG|YTS|YIFY|MX|SPARKS|GECKOS|AMIABLE|FGT|EVO|STUTTERSHIT)',
-        r'[\.\s_-]?(FLUX|NTb|MIXED|SMURF|TOMMY|ION10|DEFLATE|SPARKS|MZABI)',
-        r'\[.*?\]',
-        r'\(.*?\)',
-        r'\s*[-–]\s*[A-Za-z0-9]+$',
-        r'[\(\[]?\d{4}[\)\]]?',
-    ]
+    # Check for split file patterns (part1, _part001, cd1, disc1)
+    split_match = re.search(r'[._\s-]?(part|pt|cd|disc|disk)\s?(\d+)', filename, re.IGNORECASE)
     
-    cleaned = filename
-    for pattern in patterns_to_remove:
-        cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
+    if split_match:
+        # This is a split movie file
+        part_number = int(split_match.group(2))
+        
+        # Get the title before the split marker
+        title_part = filename[:split_match.start()]
+        
+        # Clean the title
+        clean_title = clean_title_for_search(title_part)
+        
+        # Create display title with part info
+        display_title = f"{clean_title} - Part {part_number}"
+        
+        return {
+            "title": display_title,
+            "episode_id": f"Part{part_number:02d}",
+            "is_series": False,
+            "is_split": True,
+            "clean_title": clean_title,
+            "part_number": part_number
+        }
     
-    cleaned = re.sub(r'[._]+', ' ', cleaned)
-    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
-    cleaned = re.sub(r'\s*[-–]+\s*$', '', cleaned).strip()
-    
-    if cleaned:
-        cleaned = ' '.join(word.capitalize() for word in cleaned.split())
-    
-    title = cleaned if cleaned else "Unknown Title"
+    # Regular movie - clean the title
+    clean_title = clean_title_for_search(filename)
     
     return {
-        "title": title,
+        "title": clean_title,
         "episode_id": None,
         "is_series": False,
-        "clean_title": title
+        "is_split": False,
+        "clean_title": clean_title,
+        "part_number": None
     }
 
 
@@ -242,8 +305,9 @@ async def scan_channel():
     )
     
     # Temporary storage for raw items
-    standalone_movies = []
-    series_dict = {}  # Key: series title, Value: list of episodes
+    series_dict = {}       # Key: series title, Value: list of episodes
+    split_movies_dict = {} # Key: movie title, Value: list of parts
+    standalone_movies = [] # Single-file movies
     tmdb_cache = {}
     
     async with app:
@@ -298,10 +362,7 @@ async def scan_channel():
                 series_title = parsed["clean_title"]
                 
                 if series_title not in series_dict:
-                    series_dict[series_title] = {
-                        "episodes": [],
-                        "tmdb_fetched": False
-                    }
+                    series_dict[series_title] = []
                 
                 episode = {
                     "title": parsed["title"],
@@ -309,27 +370,31 @@ async def scan_channel():
                     "size": formatted_size,
                     "link": telegram_link
                 }
-                series_dict[series_title]["episodes"].append(episode)
-            else:
-                # Standalone movie
-                # Get TMDB data
-                if parsed["clean_title"] not in tmdb_cache:
-                    print(f"Fetching TMDB data for movie: {parsed['clean_title']}")
-                    tmdb_cache[parsed["clean_title"]] = search_tmdb(parsed["clean_title"], is_series=False)
+                series_dict[series_title].append(episode)
                 
-                tmdb_data = tmdb_cache[parsed["clean_title"]]
+            elif parsed["is_split"]:
+                # Group into split movie parts
+                movie_title = parsed["clean_title"]
                 
-                movie = {
-                    "type": "movie",
-                    "id": f"movie-{media_count}",
+                if movie_title not in split_movies_dict:
+                    split_movies_dict[movie_title] = []
+                
+                part = {
                     "title": parsed["title"],
+                    "episodeId": parsed["episode_id"],
                     "size": formatted_size,
                     "link": telegram_link,
-                    "poster": tmdb_data.get("poster"),
-                    "overview": tmdb_data.get("overview"),
-                    "rating": tmdb_data.get("rating")
+                    "part_number": parsed["part_number"]
                 }
-                standalone_movies.append(movie)
+                split_movies_dict[movie_title].append(part)
+                
+            else:
+                # Standalone movie - store for later processing
+                standalone_movies.append({
+                    "parsed": parsed,
+                    "size": formatted_size,
+                    "link": telegram_link
+                })
             
             media_count += 1
             
@@ -344,13 +409,14 @@ async def scan_channel():
     series_list = []
     series_id = 0
     
-    for series_title, series_data in series_dict.items():
+    for series_title, episodes in series_dict.items():
         # Fetch TMDB data for series
         print(f"Fetching TMDB data for series: {series_title}")
         tmdb_data = search_tmdb(series_title, is_series=True)
+        tmdb_cache[series_title] = tmdb_data
         
         # Sort episodes by episode ID
-        episodes = sorted(series_data["episodes"], key=lambda e: e["episodeId"])
+        sorted_episodes = sorted(episodes, key=lambda e: e["episodeId"])
         
         series = {
             "type": "series",
@@ -359,16 +425,78 @@ async def scan_channel():
             "poster": tmdb_data.get("poster"),
             "overview": tmdb_data.get("overview"),
             "rating": tmdb_data.get("rating"),
-            "episodeCount": len(episodes),
-            "episodes": episodes
+            "episodeCount": len(sorted_episodes),
+            "episodes": sorted_episodes
         }
         series_list.append(series)
         series_id += 1
     
-    # Combine all items: series first, then movies
-    all_items = series_list + standalone_movies
+    # Process split movies as "series" folders
+    split_movies_list = []
+    split_id = 0
     
-    print(f"\nOrganized into {len(series_list)} series and {len(standalone_movies)} standalone movies")
+    for movie_title, parts in split_movies_dict.items():
+        # Fetch TMDB data for split movie
+        print(f"Fetching TMDB data for split movie: {movie_title}")
+        tmdb_data = search_tmdb(movie_title, is_series=False)
+        tmdb_cache[movie_title] = tmdb_data
+        
+        # Sort parts by part number
+        sorted_parts = sorted(parts, key=lambda p: p.get("part_number", 0))
+        
+        # Remove part_number from output (internal use only)
+        for part in sorted_parts:
+            part.pop("part_number", None)
+        
+        split_movie = {
+            "type": "series",  # Display as folder with parts
+            "id": f"split-{split_id}",
+            "title": movie_title,
+            "poster": tmdb_data.get("poster"),
+            "overview": tmdb_data.get("overview"),
+            "rating": tmdb_data.get("rating"),
+            "episodeCount": len(sorted_parts),
+            "episodes": sorted_parts
+        }
+        split_movies_list.append(split_movie)
+        split_id += 1
+    
+    # Process standalone movies
+    movies_list = []
+    movie_id = 0
+    
+    for movie_data in standalone_movies:
+        parsed = movie_data["parsed"]
+        clean_title = parsed["clean_title"]
+        
+        # Check cache first
+        if clean_title not in tmdb_cache:
+            print(f"Fetching TMDB data for movie: {clean_title}")
+            tmdb_cache[clean_title] = search_tmdb(clean_title, is_series=False)
+        
+        tmdb_data = tmdb_cache[clean_title]
+        
+        movie = {
+            "type": "movie",
+            "id": f"movie-{movie_id}",
+            "title": parsed["title"],
+            "size": movie_data["size"],
+            "link": movie_data["link"],
+            "poster": tmdb_data.get("poster"),
+            "overview": tmdb_data.get("overview"),
+            "rating": tmdb_data.get("rating")
+        }
+        movies_list.append(movie)
+        movie_id += 1
+    
+    # Combine all items: series first, then split movies, then standalone movies
+    all_items = series_list + split_movies_list + movies_list
+    
+    print(f"\nOrganized into:")
+    print(f"  - {len(series_list)} TV series")
+    print(f"  - {len(split_movies_list)} split movies (multi-part)")
+    print(f"  - {len(movies_list)} standalone movies")
+    print(f"  Total: {len(all_items)} entries")
     
     # Ensure output directory exists
     os.makedirs(os.path.dirname(OUTPUT_FILE) or '.', exist_ok=True)
