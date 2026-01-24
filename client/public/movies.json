@@ -3,9 +3,9 @@
     "type": "series",
     "id": "series-0",
     "title": "Cowboy Bebop",
-    "poster": null,
-    "overview": null,
-    "rating": null,
+    "poster": "https://image.tmdb.org/t/p/w500/xDiXDfZwC6XYC6fxHI1jl3A3Ill.jpg",
+    "overview": "In 2071, roughly fifty years after an accident with a hyperspace gateway made the Earth almost uninhabitable, humanity has colonized most of the rocky planets and moons of the Solar System. Amid a rising crime rate, the Inter Solar System Police (ISSP) set up a legalized contract system, in which registered bounty hunters, also referred to as \"Cowboys\", chase criminals and bring them in alive in return for a reward.",
+    "rating": 8.5,
     "episodeCount": 26,
     "episodes": [
       {
@@ -170,9 +170,9 @@
     "type": "series",
     "id": "series-1",
     "title": "Frieren Beyond Journeys End",
-    "poster": null,
-    "overview": null,
-    "rating": null,
+    "poster": "https://image.tmdb.org/t/p/w500/dqZENchTd7lp5zht7BdlqM7RBhD.jpg",
+    "overview": "Decades after her party defeated the Demon King, an old friend's funeral launches the elf wizard Frieren on a journey of self-discovery.",
+    "rating": 8.7,
     "episodeCount": 28,
     "episodes": [
       {
@@ -351,8 +351,8 @@
     "title": "Angel's Egg",
     "size": "1.7 GB",
     "link": "https://t.me/c/3686417406/31",
-    "poster": null,
-    "overview": null,
-    "rating": null
+    "poster": "https://image.tmdb.org/t/p/w500/dcEUGvckbePFzPKhGXnS9T3kZMG.jpg",
+    "overview": "In the ruins of a strange city, a young girl takes care of a large egg she holds carefully in her arms. She bonds with a boy who is searching for a bird he saw in a dream.",
+    "rating": 7.7
   }
 ]
