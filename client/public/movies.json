@@ -1,7 +1,492 @@
 [
   {
-    "type": "movie",
+    "type": "series",
     "id": "content-0",
+    "title": "Monster",
+    "poster": "https://image.tmdb.org/t/p/w500/n5XNKXnoXpoXyfiCtXHOf8q8PFM.jpg",
+    "overview": "Kenzou Tenma, a Japanese brain surgeon in Germany, finds his life in utter turmoil after getting involved with a psychopath that was once a former patient.",
+    "rating": 8.497,
+    "episodes": [
+      {
+        "title": "Monster.2004.S01E01.Herr.Dr.Tenma.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E01.Herr.Dr.Tenma.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "314.8 MB",
+        "link": "https://t.me/c/3686417406/100"
+      },
+      {
+        "title": "Monster.2004.S01E02.Downfall.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E02.Downfall.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "282.4 MB",
+        "link": "https://t.me/c/3686417406/101"
+      },
+      {
+        "title": "Monster.2004.S01E03.Murder.Case.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E03.Murder.Case.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "352.2 MB",
+        "link": "https://t.me/c/3686417406/102"
+      },
+      {
+        "title": "Monster.2004.S01E08.The.Fugitive.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E08.The.Fugitive.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "283.1 MB",
+        "link": "https://t.me/c/3686417406/107"
+      },
+      {
+        "title": "Monster.2004.S01E10.A.Past.Erased.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E10.A.Past.Erased.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "239.2 MB",
+        "link": "https://t.me/c/3686417406/109"
+      },
+      {
+        "title": "Monster.2004.S01E11.511.Kinderheim.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E11.511.Kinderheim.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "265.9 MB",
+        "link": "https://t.me/c/3686417406/110"
+      },
+      {
+        "title": "Monster.2004.S01E14.Left.Behind.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E14.Left.Behind.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "267.5 MB",
+        "link": "https://t.me/c/3686417406/113"
+      },
+      {
+        "title": "Monster.2004.S01E15.Be.My.Baby.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E15.Be.My.Baby.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "261.4 MB",
+        "link": "https://t.me/c/3686417406/114"
+      },
+      {
+        "title": "Monster.2004.S01E17.Reunion.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E17.Reunion.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "251.4 MB",
+        "link": "https://t.me/c/3686417406/116"
+      },
+      {
+        "title": "Monster.2004.S01E18.Five.Sugars.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E18.Five.Sugars.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "266.6 MB",
+        "link": "https://t.me/c/3686417406/117"
+      },
+      {
+        "title": "Monster.2004.S01E21.Happy.Holidays.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E21.Happy.Holidays.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "317.8 MB",
+        "link": "https://t.me/c/3686417406/120"
+      },
+      {
+        "title": "Monster.2004.S01E27.Proof.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E27.Proof.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "234.7 MB",
+        "link": "https://t.me/c/3686417406/126"
+      },
+      {
+        "title": "Monster.2004.S01E28.Just.One.Case.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E28.Just.One.Case.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "250.9 MB",
+        "link": "https://t.me/c/3686417406/127"
+      },
+      {
+        "title": "Monster.2004.S01E29.Execution.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E29.Execution.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "260.2 MB",
+        "link": "https://t.me/c/3686417406/128"
+      },
+      {
+        "title": "Monster.2004.S01E30.Decision.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E30.Decision.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "269.4 MB",
+        "link": "https://t.me/c/3686417406/129"
+      },
+      {
+        "title": "Monster.2004.S01E32.Sanctuary.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E32.Sanctuary.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "306.7 MB",
+        "link": "https://t.me/c/3686417406/131"
+      },
+      {
+        "title": "Monster.2004.S01E40.Grimmer.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E40.Grimmer.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "337.5 MB",
+        "link": "https://t.me/c/3686417406/138"
+      },
+      {
+        "title": "Monster.2004.S01E41.Ghosts.of.511.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E41.Ghosts.of.511.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "243.2 MB",
+        "link": "https://t.me/c/3686417406/140"
+      },
+      {
+        "title": "Monster.2004.S01E43.Detective.Suk.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E43.Detective.Suk.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "209.8 MB",
+        "link": "https://t.me/c/3686417406/142"
+      },
+      {
+        "title": "Monster.2004.S01E46.Contact.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E46.Contact.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "257.0 MB",
+        "link": "https://t.me/c/3686417406/145"
+      },
+      {
+        "title": "Monster.2004.S01E52.The.Lawyer.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E52.The.Lawyer.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "232.2 MB",
+        "link": "https://t.me/c/3686417406/77"
+      },
+      {
+        "title": "Monster.2004.S01E53.Determination.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E53.Determination.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "245.2 MB",
+        "link": "https://t.me/c/3686417406/78"
+      },
+      {
+        "title": "Monster.2004.S01E54.The.Escape.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E54.The.Escape.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "302.2 MB",
+        "link": "https://t.me/c/3686417406/79"
+      },
+      {
+        "title": "Monster.2004.S01E55.Room.402.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E55.Room.402.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "241.0 MB",
+        "link": "https://t.me/c/3686417406/80"
+      },
+      {
+        "title": "Monster.2004.S01E57.That.Night.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E57.That.Night.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "270.4 MB",
+        "link": "https://t.me/c/3686417406/82"
+      },
+      {
+        "title": "Monster.2004.S01E66.Welcome.Home.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E66.Welcome.Home.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "294.1 MB",
+        "link": "https://t.me/c/3686417406/91"
+      },
+      {
+        "title": "Monster.2004.S01E67.I'm.Back.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E67.I'm.Back.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "286.2 MB",
+        "link": "https://t.me/c/3686417406/92"
+      },
+      {
+        "title": "Monster.2004.S01E68.Ruhenheim.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E68.Ruhenheim.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "285.3 MB",
+        "link": "https://t.me/c/3686417406/93"
+      },
+      {
+        "title": "Monster.2004.S01E72.A.Nameless.Man.1080p.BluRay.x265-Pahe.in.mkv",
+        "episodeId": "Monster.2004.S01E72.A.Nameless.Man.1080p.BluRay.x265-Pahe.in.mkv",
+        "size": "269.7 MB",
+        "link": "https://t.me/c/3686417406/97"
+      },
+      {
+        "title": "Monster_2004_S01E04_Night_of_the_Execution_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E04_Night_of_the_Execution_1080p_BluRay_x265_Pahe.mkv",
+        "size": "244.4 MB",
+        "link": "https://t.me/c/3686417406/103"
+      },
+      {
+        "title": "Monster_2004_S01E05_The_Girl_From_Heidelberg_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E05_The_Girl_From_Heidelberg_1080p_BluRay_x265_Pahe.mkv",
+        "size": "282.5 MB",
+        "link": "https://t.me/c/3686417406/104"
+      },
+      {
+        "title": "Monster_2004_S01E06_Disappearance_Report_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E06_Disappearance_Report_1080p_BluRay_x265_Pahe.mkv",
+        "size": "256.0 MB",
+        "link": "https://t.me/c/3686417406/105"
+      },
+      {
+        "title": "Monster_2004_S01E07_Mansion_of_Tragedy_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E07_Mansion_of_Tragedy_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "199.0 MB",
+        "link": "https://t.me/c/3686417406/106"
+      },
+      {
+        "title": "Monster_2004_S01E09_The_Girl_and_the_Seasoned_Soldier_1080p_BluRay.mkv",
+        "episodeId": "Monster_2004_S01E09_The_Girl_and_the_Seasoned_Soldier_1080p_BluRay.mkv",
+        "size": "309.7 MB",
+        "link": "https://t.me/c/3686417406/108"
+      },
+      {
+        "title": "Monster_2004_S01E12_A_Little_Experiment_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E12_A_Little_Experiment_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "235.5 MB",
+        "link": "https://t.me/c/3686417406/111"
+      },
+      {
+        "title": "Monster_2004_S01E13_Petra_and_Schumann_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E13_Petra_and_Schumann_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "197.9 MB",
+        "link": "https://t.me/c/3686417406/112"
+      },
+      {
+        "title": "Monster_2004_S01E16_Wolf's_Confession_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E16_Wolf's_Confession_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "254.8 MB",
+        "link": "https://t.me/c/3686417406/115"
+      },
+      {
+        "title": "Monster_2004_S01E19_Monster's_Abyss_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E19_Monster's_Abyss_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "245.9 MB",
+        "link": "https://t.me/c/3686417406/118"
+      },
+      {
+        "title": "Monster_2004_S01E20_Journey_to_Freiham_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E20_Journey_to_Freiham_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "321.6 MB",
+        "link": "https://t.me/c/3686417406/119"
+      },
+      {
+        "title": "Monster_2004_S01E22_Lunge's_Trap_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E22_Lunge's_Trap_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "250.7 MB",
+        "link": "https://t.me/c/3686417406/121"
+      },
+      {
+        "title": "Monster_2004_S01E23_Eva's_Confession_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E23_Eva's_Confession_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "296.8 MB",
+        "link": "https://t.me/c/3686417406/122"
+      },
+      {
+        "title": "Monster_2004_S01E24_Of_Men_and_Dining_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E24_Of_Men_and_Dining_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "324.3 MB",
+        "link": "https://t.me/c/3686417406/123"
+      },
+      {
+        "title": "Monster_2004_S01E25_Thursday's_Boy_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E25_Thursday's_Boy_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "275.5 MB",
+        "link": "https://t.me/c/3686417406/124"
+      },
+      {
+        "title": "Monster_2004_S01E26_The_Secret_Woods_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E26_The_Secret_Woods_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "287.0 MB",
+        "link": "https://t.me/c/3686417406/125"
+      },
+      {
+        "title": "Monster_2004_S01E31_In_Broad_Daylight_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E31_In_Broad_Daylight_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "208.0 MB",
+        "link": "https://t.me/c/3686417406/130"
+      },
+      {
+        "title": "Monster_2004_S01E33_A_Child's_View_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E33_A_Child's_View_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "312.1 MB",
+        "link": "https://t.me/c/3686417406/132"
+      },
+      {
+        "title": "Monster_2004_S01E34_At_the_Edge_of_Darkness_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E34_At_the_Edge_of_Darkness_1080p_BluRay_x265_Pahe.mkv",
+        "size": "266.7 MB",
+        "link": "https://t.me/c/3686417406/133"
+      },
+      {
+        "title": "Monster_2004_S01E35_My_Nameless_Hero_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E35_My_Nameless_Hero_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "258.6 MB",
+        "link": "https://t.me/c/3686417406/134"
+      },
+      {
+        "title": "Monster_2004_S01E36_The_Monster_of_Chaos_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E36_The_Monster_of_Chaos_1080p_BluRay_x265_Pahe.mkv",
+        "size": "268.7 MB",
+        "link": "https://t.me/c/3686417406/135"
+      },
+      {
+        "title": "Monster_2004_S01E37_A_Nameless_Monster_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E37_A_Nameless_Monster_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "326.5 MB",
+        "link": "https://t.me/c/3686417406/136"
+      },
+      {
+        "title": "Monster_2004_S01E38_The_Demon_in_My_Eyes_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E38_The_Demon_in_My_Eyes_1080p_BluRay_x265_Pahe.mkv",
+        "size": "272.6 MB",
+        "link": "https://t.me/c/3686417406/137"
+      },
+      {
+        "title": "Monster_2004_S01E39_The_Hell_in_His_Eyes_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E39_The_Hell_in_His_Eyes_1080p_BluRay_x265_Pahe.mkv",
+        "size": "253.0 MB",
+        "link": "https://t.me/c/3686417406/139"
+      },
+      {
+        "title": "Monster_2004_S01E42_The_Adventures_of_the_Magnificent_Steiner_1080p.mkv",
+        "episodeId": "Monster_2004_S01E42_The_Adventures_of_the_Magnificent_Steiner_1080p.mkv",
+        "size": "263.1 MB",
+        "link": "https://t.me/c/3686417406/141"
+      },
+      {
+        "title": "Monster_2004_S01E44_Double_Darkness_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E44_Double_Darkness_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "248.7 MB",
+        "link": "https://t.me/c/3686417406/143"
+      },
+      {
+        "title": "Monster_2004_S01E45_The_Monster's_Afterimage_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E45_The_Monster's_Afterimage_1080p_BluRay_x265_Pahe.mkv",
+        "size": "248.2 MB",
+        "link": "https://t.me/c/3686417406/144"
+      },
+      {
+        "title": "Monster_2004_S01E47_The_Door_to_Nightmares_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E47_The_Door_to_Nightmares_1080p_BluRay_x265_Pahe.mkv",
+        "size": "303.4 MB",
+        "link": "https://t.me/c/3686417406/72"
+      },
+      {
+        "title": "Monster_2004_S01E48_The_Scariest_Thing_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E48_The_Scariest_Thing_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "331.9 MB",
+        "link": "https://t.me/c/3686417406/73"
+      },
+      {
+        "title": "Monster_2004_S01E49_The_Cruelest_Thing_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E49_The_Cruelest_Thing_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "264.2 MB",
+        "link": "https://t.me/c/3686417406/74"
+      },
+      {
+        "title": "Monster_2004_S01E50_The_Rose_Mansion_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E50_The_Rose_Mansion_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "294.4 MB",
+        "link": "https://t.me/c/3686417406/75"
+      },
+      {
+        "title": "Monster_2004_S01E51_The_Monster's_Love_Letter_1080p_BluRay_x265.mkv",
+        "episodeId": "Monster_2004_S01E51_The_Monster's_Love_Letter_1080p_BluRay_x265.mkv",
+        "size": "280.2 MB",
+        "link": "https://t.me/c/3686417406/76"
+      },
+      {
+        "title": "Monster_2004_S01E56_The_Never_Ending_Journey_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E56_The_Never_Ending_Journey_1080p_BluRay_x265_Pahe.mkv",
+        "size": "327.7 MB",
+        "link": "https://t.me/c/3686417406/81"
+      },
+      {
+        "title": "Monster_2004_S01E58_I_Hate_This_Job_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E58_I_Hate_This_Job_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "255.0 MB",
+        "link": "https://t.me/c/3686417406/83"
+      },
+      {
+        "title": "Monster_2004_S01E59_The_Man_Who_Saw_the_Devil_1080p_BluRay_x265.mkv",
+        "episodeId": "Monster_2004_S01E59_The_Man_Who_Saw_the_Devil_1080p_BluRay_x265.mkv",
+        "size": "234.0 MB",
+        "link": "https://t.me/c/3686417406/84"
+      },
+      {
+        "title": "Monster_2004_S01E60_The_Man_Who_Knew_Too_Much_1080p_BluRay_x265.mkv",
+        "episodeId": "Monster_2004_S01E60_The_Man_Who_Knew_Too_Much_1080p_BluRay_x265.mkv",
+        "size": "232.2 MB",
+        "link": "https://t.me/c/3686417406/85"
+      },
+      {
+        "title": "Monster_2004_S01E61_The_Door_to_Memories_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E61_The_Door_to_Memories_1080p_BluRay_x265_Pahe.mkv",
+        "size": "253.8 MB",
+        "link": "https://t.me/c/3686417406/86"
+      },
+      {
+        "title": "Monster_2004_S01E62_A_Pleasant_Dinner_Table_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E62_A_Pleasant_Dinner_Table_1080p_BluRay_x265_Pahe.mkv",
+        "size": "234.0 MB",
+        "link": "https://t.me/c/3686417406/87"
+      },
+      {
+        "title": "Monster_2004_S01E63_Unrelated_Murders_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E63_Unrelated_Murders_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "246.2 MB",
+        "link": "https://t.me/c/3686417406/88"
+      },
+      {
+        "title": "Monster_2004_S01E64_The_Baby's_Depression_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E64_The_Baby's_Depression_1080p_BluRay_x265_Pahe.mkv",
+        "size": "245.6 MB",
+        "link": "https://t.me/c/3686417406/89"
+      },
+      {
+        "title": "Monster_2004_S01E65_Johan's_Footprints_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E65_Johan's_Footprints_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "320.4 MB",
+        "link": "https://t.me/c/3686417406/90"
+      },
+      {
+        "title": "Monster_2004_S01E69_The_Peaceful_House_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E69_The_Peaceful_House_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "284.8 MB",
+        "link": "https://t.me/c/3686417406/94"
+      },
+      {
+        "title": "Monster_2004_S01E70_The_Town_Massacre_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E70_The_Town_Massacre_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "273.9 MB",
+        "link": "https://t.me/c/3686417406/95"
+      },
+      {
+        "title": "Monster_2004_S01E71_The_Wrath_of_the_Magnificent_Steiner_1080p_BluRay.mkv",
+        "episodeId": "Monster_2004_S01E71_The_Wrath_of_the_Magnificent_Steiner_1080p_BluRay.mkv",
+        "size": "259.4 MB",
+        "link": "https://t.me/c/3686417406/96"
+      },
+      {
+        "title": "Monster_2004_S01E73_Scenery_for_a_Doomsday_1080p_BluRay_x265_Pahe.mkv",
+        "episodeId": "Monster_2004_S01E73_Scenery_for_a_Doomsday_1080p_BluRay_x265_Pahe.mkv",
+        "size": "261.7 MB",
+        "link": "https://t.me/c/3686417406/98"
+      },
+      {
+        "title": "Monster_2004_S01E74_The_Real_Monster_1080p_BluRay_x265_Pahe_in.mkv",
+        "episodeId": "Monster_2004_S01E74_The_Real_Monster_1080p_BluRay_x265_Pahe_in.mkv",
+        "size": "391.0 MB",
+        "link": "https://t.me/c/3686417406/99"
+      }
+    ],
+    "episodeCount": 74
+  },
+  {
+    "type": "movie",
+    "id": "content-1",
+    "title": "From Up on Poppy Hill",
+    "size": "1.2 GB",
+    "link": "https://t.me/c/3686417406/70",
+    "poster": "https://image.tmdb.org/t/p/w500/rRLYX4RZIyloHSJwvZKAhphAjiB.jpg",
+    "overview": "Yokohama, 1963. Japan is picking itself up from the devastation of World War II and preparing to host the 1964 Olympics—and the mood is one of both optimism and conflict as the young generation struggles to throw off the shackles of a troubled past. Against this backdrop of hope and change, a friendship begins to blossom between high school students Umi and Shun—but a buried secret from their past emerges to cast a shadow on the future and pull them apart.",
+    "rating": 7.531
+  },
+  {
+    "type": "movie",
+    "id": "content-2",
+    "title": "My Neighbor Totoro",
+    "size": "1.1 GB",
+    "link": "https://t.me/c/3686417406/69",
+    "poster": "https://image.tmdb.org/t/p/w500/rtGDOeG9LzoerkDGZF9dnVeLppL.jpg",
+    "overview": "Two sisters move to the country with their father in order to be closer to their hospitalized mother, and discover the surrounding trees are inhabited by Totoros, magical spirits of the forest. When the youngest runs away from home, the older sister seeks help from the spirits to find her.",
+    "rating": 8.065
+  },
+  {
+    "type": "movie",
+    "id": "content-3",
+    "title": "Chainsaw Man The Movie Reze Arc",
+    "size": "1.1 GB",
+    "link": "https://t.me/c/3686417406/68",
+    "poster": "https://image.tmdb.org/t/p/w500/xdzLBZjCVSEsic7m7nJc4jNJZVW.jpg",
+    "overview": "In a brutal war between devils, hunters, and secret enemies, a mysterious girl named Reze has stepped into Denji's world, and he faces his deadliest battle yet, fueled by love in a world where survival knows no rules.",
+    "rating": 8.314
+  },
+  {
+    "type": "movie",
+    "id": "content-4",
     "title": "The Garden of Words",
     "size": "1.1 GB",
     "link": "https://t.me/c/3686417406/67",
@@ -11,7 +496,7 @@
   },
   {
     "type": "series",
-    "id": "content-1",
+    "id": "content-5",
     "title": "My Hero Academia You're Next",
     "poster": "https://image.tmdb.org/t/p/w500/tTrI6PwqzxkgO3dvQ7BEKXM7SYR.jpg",
     "overview": "In a society devastated by the effects of an all-out war between heroes and villains, a mysterious giant fortress suddenly appears, engulfing towns and people one after another. Then, a man reminiscent of All Might, the 'symbol of peace', stands in front of Izuku and his friends...",
@@ -46,7 +531,7 @@
   },
   {
     "type": "series",
-    "id": "content-2",
+    "id": "content-6",
     "title": "Your Name",
     "poster": "https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg",
     "overview": "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places. Mitsuha wakes up in Taki’s body, and he in hers. This bizarre occurrence continues to happen randomly, and the two must adjust their lives around each other.",
@@ -69,7 +554,7 @@
   },
   {
     "type": "series",
-    "id": "content-3",
+    "id": "content-7",
     "title": "Cowboy Bebop",
     "poster": "https://image.tmdb.org/t/p/w500/xDiXDfZwC6XYC6fxHI1jl3A3Ill.jpg",
     "overview": "In 2071, roughly fifty years after an accident with a hyperspace gateway made the Earth almost uninhabitable, humanity has colonized most of the rocky planets and moons of the Solar System. Amid a rising crime rate, the Inter Solar System Police (ISSP) set up a legalized contract system, in which registered bounty hunters, also referred to as \"Cowboys\", chase criminals and bring them in alive in return for a reward.",
@@ -236,7 +721,7 @@
   },
   {
     "type": "movie",
-    "id": "content-4",
+    "id": "content-8",
     "title": "Angel's Egg",
     "size": "1.7 GB",
     "link": "https://t.me/c/3686417406/31",
@@ -246,7 +731,7 @@
   },
   {
     "type": "series",
-    "id": "content-5",
+    "id": "content-9",
     "title": "Frieren Beyond Journeys End",
     "poster": "https://image.tmdb.org/t/p/w500/dqZENchTd7lp5zht7BdlqM7RBhD.jpg",
     "overview": "Decades after her party defeated the Demon King, an old friend's funeral launches the elf wizard Frieren on a journey of self-discovery.",
