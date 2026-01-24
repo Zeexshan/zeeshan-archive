@@ -2,9 +2,10 @@
 """
 Tele-Flix Smart Indexer (Final Fixed Version)
 -------------------------
-1. Fixes TMDB Auth (Works with short API Keys).
-2. Cleans '6CH', 'Multi Audio', and Years properly.
-3. Groups Series/Split-Movies automatically.
+1. Fixes "Peer id invalid" by syncing dialogs first.
+2. Fixes TMDB Auth (Works with short API Keys).
+3. Cleans '6CH', 'Multi Audio', and Years properly.
+4. Groups Series/Split-Movies automatically.
 """
 
 import os
@@ -40,6 +41,7 @@ def clean_title_for_search(filename: str) -> str:
                   flags=re.IGNORECASE)
 
     # 2. Remove "Part/CD/Disc" suffixes (Crucial for split files!)
+    # Matches: _part001, -part1, .cd1, _disc 1, _pt01
     name = re.sub(r'[_\.\-\s]?(part|pt|cd|disc)\s*\d+',
                   '',
                   name,
@@ -49,16 +51,16 @@ def clean_title_for_search(filename: str) -> str:
     match = re.search(r'(S\d+E\d+|S\d+|E\d+|Episode\s*\d+)', name,
                       re.IGNORECASE)
     if match:
-        name = name[:match.start()]
+        name = name[:match.start()]  # Take everything BEFORE the episode info
 
     # 4. Remove common "Pirate/Release" tags
     tags = [
         r'[\.\s]?(2160p|1080p|720p|480p|4K|HD|SD)',
         r'[\.\s]?(BluRay|WEB-DL|WEBRip|HDTV|DVDRip|BD)',
         r'[\.\s]?(x265|x264|HEVC|AAC|AC3|DTS|10bit|HDR|Dolby|Atmos)',
-        r'[\.\s]?(Pahe\.in|Pahe|RARBG|PSA|YTS|YIFY|EMBER|GECKOS)',
+        r'[\.\s]?(Pahe\.in|Pahe|RARBG|PSA|YTS|YIFY|EMBER|GECKOS|Toonworld4all)',
         r'[\.\s]?(Multi Audio|Multi|Dual Audio|ESub|Sub|Dub)',
-        r'[\.\s]?(\d+CH|6CH|2CH|5\.1CH|5\.1)',  # Audio Channels (Fix for Your Name)
+        r'[\.\s]?(\d+CH|6CH|2CH|5\.1CH|5\.1)',  # Audio Channels
         r'\[.*?\]',
         r'\(.*?\)'
     ]
@@ -114,9 +116,9 @@ def get_tmdb_metadata(clean_name):
             # Fallback: Try searching without the year
             if re.search(r'\d{4}', clean_name):
                 no_year = re.sub(r'\d{4}', '', clean_name).strip()
-                print(f"   ↳ Retrying without year: '{no_year}'")
-                # Recursive call (but limit depth to avoid infinite loops)
+                # Recursive call (limit depth)
                 if clean_name != no_year:
+                    print(f"   ↳ Retrying without year: '{no_year}'")
                     return get_tmdb_metadata(no_year)
 
     except Exception as e:
@@ -156,7 +158,17 @@ async def scan_channel():
     tmdb_cache = {}
 
     async with app:
-        print("Connected! Scanning messages...")
+        print("Connected!")
+
+        # --- CRITICAL FIX: SYNC DIALOGS TO FIND PEER ID ---
+        print("Syncing dialogs to cache peer IDs...")
+        try:
+            async for dialog in app.get_dialogs():
+                pass  # Just iterating populates the cache
+            print("Dialogs synced. Scanning channel...")
+        except Exception as e:
+            print(f"Warning during sync: {e}")
+        # --------------------------------------------------
 
         async for message in app.get_chat_history(CHANNEL_ID):
             if not message.media: continue
