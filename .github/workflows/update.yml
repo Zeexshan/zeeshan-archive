@@ -1,7 +1,9 @@
 name: Update Movie List
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:       # Allows you to click "Run" manually if you want
+  schedule:
+    - cron: '0 */6 * * *'  # Automatically runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
 
 jobs:
   update-catalog:
