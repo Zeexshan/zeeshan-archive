@@ -1,0 +1,255 @@
+Here's a comprehensive, production-ready prompt inspired by the anime ranking visual:
+
+---
+
+## **PROJECT ENHANCEMENT: Personal Anime Ranking & Watchlist System**
+
+**Your Role:** Act as a senior React developer building a polished, anime-tracking feature inspired by professional ranking boards like MyAnimeList and AniList.
+
+**Current Application State:**
+This is a static React application hosted on Netlify that displays anime/movies from a JSON file. There is no backend infrastructure, no database server, and no API endpoints. All data persistence must happen client-side in the browser without requiring server modifications or manual file editing.
+
+**Vision Reference:**
+The feature should feel similar to professional anime ranking boards (like the "Anime Corner" top 10 image shown), where users can see their personal rankings displayed beautifully with rank numbers, titles, and ratings clearly visible.
+
+---
+
+## **FEATURE 1: Enhanced Movie Card with Tracking Button**
+
+**Visual Integration:**
+
+Add a new tracking button to each `MovieCard` component that feels native to the existing design. Style it distinctly from the download button—consider using an icon like a star, heart, or checklist symbol combined with text like "Track" or "Add to List".
+
+**Status Indicator Badge:**
+
+Once a movie has been tracked, display a small, unobtrusive status badge on the card itself. Use color-coding for instant recognition:
+- Blue badge for "Plan to Watch"
+- Orange badge for "Watching"  
+- Green badge with star rating for "Completed" (e.g., "★ 8.5")
+- Gray badge for "Dropped"
+
+Position this badge in a corner of the movie card (top-right works well) so users can instantly see what they've tracked without opening the modal.
+
+---
+
+## **FEATURE 2: Comprehensive Rating & Tracking Modal**
+
+**Modal Trigger & Behavior:**
+
+When the tracking button is clicked, open a smooth, centered modal with a semi-transparent dark overlay. The modal should be responsive—full-width on mobile, fixed-width (around 500-600px) on desktop.
+
+**Modal Structure - Three Sections:**
+
+**Section 1: Watch Status Selection**
+
+Create a visually appealing status selector with four large, tappable buttons arranged horizontally (stack vertically on mobile):
+
+- **Plan to Watch** - Icon: bookmark or calendar | Color: Blue
+- **Watching** - Icon: play button or eye | Color: Orange  
+- **Completed** - Icon: checkmark or trophy | Color: Green
+- **Dropped** - Icon: x or stop sign | Color: Gray
+
+Only one status can be active at a time. The selected status should be visually highlighted with a filled background and border, while unselected options remain outlined only.
+
+**Section 2: Rating System (Conditional)**
+
+This section should only be enabled and visible when "Completed" status is selected. Otherwise, show it in a disabled, grayed-out state with helper text: "Complete this anime to add a rating."
+
+**Rating Interface Options (choose one approach):**
+
+**Option A - Star Rating:** Display 10 clickable stars in a row. Users can click any star to set their rating (clicking the 7th star = 7/10). Hovering should preview the rating before clicking.
+
+**Option B - Slider:** A horizontal slider from 1 to 10 with the current value displayed prominently above it (e.g., "7.5 / 10"). This allows half-point ratings if desired.
+
+**Option C - Number Grid:** Display numbers 1-10 as individual clickable tiles arranged in two rows. Selected number is highlighted with the green "Completed" color.
+
+Include a small label showing the rating contextually: "Masterpiece (10)", "Great (8-9)", "Good (7)", "Average (5-6)", "Poor (1-4)" to help users calibrate their ratings.
+
+**Section 3: Personal Review/Notes**
+
+Add a textarea with placeholder text like "Write your thoughts about this anime (optional)...". Set a reasonable character limit of 500 characters and display a live character counter at the bottom-right.
+
+Style the textarea to match the dark theme with subtle borders that brighten on focus.
+
+**Modal Footer - Action Buttons:**
+
+Include three buttons:
+- **Save Button** (primary, bright accent color): Saves all changes to localStorage and closes modal
+- **Delete Button** (danger color, only shown if movie was previously tracked): Removes all tracking data for this movie
+- **Cancel Button** (secondary, subtle): Closes modal without saving changes
+
+**Smart Pre-filling:**
+
+If this movie was previously tracked, automatically load and display the existing data when the modal opens. This allows users to update their ratings or status easily.
+
+---
+
+## **FEATURE 3: Personal Rankings Page - The Leaderboard**
+
+**New Route Setup:**
+
+Create a new route accessible at `/rankings` with clear navigation. Add a link in the main navigation bar (if one exists) or a floating button on the catalog page that says "View My Rankings" or "My Top 10".
+
+**Page Layout & Design:**
+
+**Hero Section:**
+Design an eye-catching header inspired by the "Anime Corner" style:
+- Large title: "My Personal Anime Rankings" or "My Top Anime List"
+- Display total statistics: "X Completed | Y Watching | Z Plan to Watch"
+- Average rating across all completed anime
+- Optional: Date range filter or "Last updated" timestamp
+
+**Ranking Display - Leaderboard Style:**
+
+Create a numbered list layout (not a grid) similar to professional ranking boards. Each entry should be a horizontal card/row that includes:
+
+**Position Indicator:**
+Display the rank number (1, 2, 3...) in a large, bold, colored square on the left side. Use special styling for top 3:
+- Rank #1: Gold background (#FFD700)
+- Rank #2: Silver background (#C0C0C0)  
+- Rank #3: Bronze background (#CD7F32)
+- Ranks #4-10: Blue gradient background
+- Ranks #11+: Gray background
+
+**Anime Information:**
+- Anime title in bold, large font
+- Small thumbnail/poster image if available from the original JSON
+- File size or episode count from original data
+
+**Rating Display:**
+Show the user's rating prominently on the right side of each row. Display it as a large number (e.g., "9.5") with "/10" suffix, or as filled stars with the numerical value.
+
+**Review Preview:**
+If a review exists, show the first 100-150 characters with "..." and a "Read more" button that expands the full text inline or in a popover.
+
+**Percentage Display (Optional Enhancement):**
+Similar to the Anime Corner image showing percentages, you could calculate and display a "personal compatibility score" showing what percentage of your completed anime scored lower than this one. For example, if this is your #3 out of 20 completed anime, it's in the "top 15%".
+
+**Sorting & Filtering Options:**
+
+Add a toolbar above the rankings with controls for:
+- **Sort by:** Rating (High to Low - default), Rating (Low to High), Recently Completed, Alphabetical
+- **Filter by:** All Completed, Rated 8+, Rated 5-7, Rated Below 5
+- **View Toggle:** List view (default) vs Grid view (more compact)
+
+**Empty State:**
+
+If no anime have been marked as completed with ratings, display a beautiful empty state illustration with text:
+- "Your Rankings Board is Empty!"
+- "Start tracking and rating your completed anime to build your personal top list."
+- Prominent button: "Go to Catalog"
+
+**Alternative View - Grid Mode:**
+
+Provide a toggle to switch to a grid layout similar to the main catalog page, but with rank badges overlaid on the top-left corner of each card. This gives users flexibility in how they view their rankings.
+
+---
+
+## **FEATURE 4: Data Persistence Architecture**
+
+**Custom Hook Implementation:**
+
+Create a custom React hook named `useUserMedia` (or `useAnimeTracking`) that encapsulates all localStorage logic. This hook should provide:
+
+**Data Structure:**
+Store data in localStorage as a JSON object with this structure:
+```
+{
+  "movie-unique-id-1": {
+    status: "Completed",
+    rating: 9,
+    review: "Amazing series...",
+    dateAdded: "2025-01-24",
+    dateCompleted: "2025-01-24"
+  },
+  "movie-unique-id-2": {
+    status: "Watching",
+    rating: null,
+    review: "",
+    dateAdded: "2025-01-20"
+  }
+}
+```
+
+**Hook Methods:**
+
+The hook should expose these functions:
+- `getTrackedData(movieId)` - Retrieve tracking data for a specific movie
+- `saveTrackedData(movieId, data)` - Save or update tracking data
+- `deleteTrackedData(movieId)` - Remove tracking data
+- `getAllTrackedMovies()` - Get all tracked movies
+- `getCompletedMovies()` - Get only completed movies with ratings, sorted by rating
+- `getMoviesByStatus(status)` - Filter movies by watch status
+
+**Error Handling:**
+
+Implement try-catch blocks around all localStorage operations since it can fail (quota exceeded, private browsing, etc.). If localStorage is unavailable, display a warning banner explaining that tracking features won't persist.
+
+**Data Migration & Versioning:**
+
+Store a version number with the data schema. This allows future updates to gracefully migrate old data structures to new ones without breaking existing user data.
+
+---
+
+## **ADDITIONAL ENHANCEMENTS**
+
+**Export/Import Functionality:**
+
+Add buttons in the rankings page to:
+- **Export:** Download all tracking data as a JSON file for backup
+- **Import:** Upload a previously exported JSON file to restore data (useful when switching devices)
+
+**Statistics Dashboard:**
+
+Create a "Stats" tab or section showing:
+- Total anime tracked across all statuses
+- Average rating of completed anime
+- Distribution chart (how many 10s, 9s, 8s, etc.)
+- Completion rate (Completed vs Dropped ratio)
+- Most active tracking month
+
+**Quick Actions:**
+
+Add right-click context menu or swipe actions on movie cards for power users:
+- Quick mark as "Plan to Watch" without opening modal
+- Quick mark as "Completed" (opens rating modal)
+
+**Search & Filters on Rankings Page:**
+
+Allow users to search their personal rankings by title or filter by rating range.
+
+---
+
+## **TECHNICAL REQUIREMENTS**
+
+**Component Files to Create:**
+- `RatingDialog.jsx` - The modal component
+- `RankingsPage.jsx` - The leaderboard page
+- `StatusBadge.jsx` - Reusable status indicator
+- `useUserMedia.js` - Custom hook for data persistence
+
+**Components to Modify:**
+- `MovieCard.jsx` - Add tracking button and status badge
+
+**Styling Guidelines:**
+- Maintain consistency with existing dark theme
+- Use smooth transitions for all interactive elements
+- Ensure mobile responsiveness for all new components
+- Add loading states for localStorage operations
+- Include hover effects for better interactivity
+
+**Accessibility Considerations:**
+- Proper ARIA labels for all interactive elements
+- Keyboard navigation support in modal
+- Focus management when modal opens/closes
+- Screen reader announcements for rating changes
+
+---
+
+**Final Deliverables:**
+- Fully functional tracking modal with all three sections
+- Complete rankings page with leaderboard styling
+- Custom hook with comprehensive localStorage management
+- Updated movie cards with status indicators
+- Responsive design that works on mobile and desktop
+- Export/import functionality for data portability
