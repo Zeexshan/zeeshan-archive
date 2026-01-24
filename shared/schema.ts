@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -9,6 +9,9 @@ export const movies = pgTable("movies", {
   title: text("title").notNull(),
   size: text("size").notNull(),
   link: text("link").notNull(),
+  poster: text("poster"),
+  overview: text("overview"),
+  rating: real("rating"),
 });
 
 export const insertMovieSchema = createInsertSchema(movies).omit({
