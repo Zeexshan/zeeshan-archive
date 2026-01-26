@@ -21,7 +21,7 @@ export interface TrackedMedia {
   dateCompleted: string | null;
 }
 
-// Your Real Google URL (DO NOT CHANGE THIS if it is correct)
+// Your Real Google URL
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxOgVnMN9UX0ciZzEFpWflajHnH88bujC8tWp_xbaNiJFbCBaYnAIhUXSgVxiHK2-EC/exec";
 
@@ -35,15 +35,7 @@ interface TrackingContextValue {
   getMediaByStatus: (
     status: WatchStatus,
   ) => Array<{ id: string; data: TrackedMedia }>;
-  getStats: () => {
-    total: number;
-    planToWatch: number;
-    watching: number;
-    completed: number;
-    dropped: number;
-    averageRating: number;
-    ratingDistribution: number[];
-  };
+  getStats: () => any;
   exportData: () => string;
   importData: (jsonString: string) => boolean;
 }
@@ -56,33 +48,39 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   const currentUser = localStorage.getItem("teleflix_user");
 
   // ---------------------------------------------------------
-  // NEW ROBUST FETCH DATA FUNCTION
+  // DEBUGGING VERSION: FETCH DATA
   // ---------------------------------------------------------
   const fetchData = useCallback(async () => {
-    if (!currentUser) return;
+    // 1. ALWAYS LOG THIS
+    console.log("🚀 STARTING FETCH. Current User:", currentUser);
+
+    if (!currentUser) {
+      console.warn("⚠️ STOPPING: No user found in localStorage!");
+      return;
+    }
 
     try {
-      console.log("🔍 Attempting to fetch for user:", currentUser);
+      console.log("🌐 Calling Google Sheets API...");
       const response = await fetch(API_URL);
       const json = await response.json();
 
-      console.log("📂 Database Keys found:", Object.keys(json));
+      console.log("📂 API Response Keys:", Object.keys(json));
 
-      // SMART SEARCH: Find the key regardless of Capital Letters
-      // (This matches "Zeeshan" with "zeeshan", "ZEESHAN", etc.)
       const userKey = Object.keys(json).find(
         (k) => k.toLowerCase() === currentUser.toLowerCase(),
       );
 
       if (userKey && json[userKey]) {
-        console.log("✅ Found match! Loading data for:", userKey);
+        console.log("✅ SUCCESS! Loading data for:", userKey);
         setData(json[userKey]);
       } else {
-        console.warn("❌ No matching user found in Database.");
+        console.error(
+          "❌ FAILURE: User found in local storage, but NOT in Database.",
+        );
         setData({});
       }
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      console.error("🔥 CRITICAL API ERROR:", error);
     }
   }, [currentUser]);
 
@@ -90,28 +88,21 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, [fetchData]);
 
+  // ... (Rest of the functions keep working as before) ...
   const getTrackedData = useCallback(
-    (mediaId: string): TrackedMedia | null => {
-      return data[mediaId] || null;
-    },
+    (mediaId: string) => data[mediaId] || null,
     [data],
   );
 
   const saveTrackedData = useCallback(
-    async (mediaId: string, mediaData: TrackedMedia): Promise<boolean> => {
+    async (mediaId: string, mediaData: TrackedMedia) => {
       if (!currentUser) return false;
-
-      // 1. OPTIMISTIC UPDATE: Update the UI immediately
       setData((prev) => ({ ...prev, [mediaId]: mediaData }));
-
-      // 2. Send to Google in the background
       try {
         fetch(API_URL, {
           method: "POST",
           mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain",
-          },
+          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify({
             user: currentUser,
             id: mediaId,
@@ -119,8 +110,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
           }),
         });
         return true;
-      } catch (error) {
-        console.error("Background sync failed:", error);
+      } catch (e) {
         return true;
       }
     },
@@ -128,7 +118,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   );
 
   const deleteTrackedData = useCallback(
-    async (mediaId: string): Promise<boolean> => {
+    async (mediaId: string) => {
       if (!currentUser) return false;
       try {
         await fetch(API_URL, {
@@ -145,22 +135,16 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         delete newData[mediaId];
         setData(newData);
         return true;
-      } catch (error) {
-        console.error("Failed to delete data:", error);
+      } catch (e) {
         return false;
       }
     },
     [currentUser, data],
   );
 
-  const getAllTrackedMedia = useCallback((): Record<string, TrackedMedia> => {
-    return data;
-  }, [data]);
+  const getAllTrackedMedia = useCallback(() => data, [data]);
 
-  const getCompletedMedia = useCallback((): Array<{
-    id: string;
-    data: TrackedMedia;
-  }> => {
+  const getCompletedMedia = useCallback(() => {
     return Object.entries(data)
       .filter(([_, d]) => d.status === "completed")
       .map(([id, d]) => ({ id, data: d }))
@@ -168,7 +152,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   }, [data]);
 
   const getMediaByStatus = useCallback(
-    (status: WatchStatus): Array<{ id: string; data: TrackedMedia }> => {
+    (status: WatchStatus) => {
       return Object.entries(data)
         .filter(([_, d]) => d.status === status)
         .map(([id, d]) => ({ id, data: d }));
@@ -182,7 +166,6 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     const ratings = completed
       .filter((d) => d.rating !== null)
       .map((d) => d.rating as number);
-
     return {
       total: all.length,
       planToWatch: all.filter((d) => d.status === "plan_to_watch").length,
@@ -200,13 +183,8 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     };
   }, [data]);
 
-  const exportData = useCallback((): string => {
-    return JSON.stringify(data, null, 2);
-  }, [data]);
-
-  const importData = useCallback((jsonString: string): boolean => {
-    return false;
-  }, []);
+  const exportData = useCallback(() => JSON.stringify(data, null, 2), [data]);
+  const importData = useCallback(() => false, []);
 
   return (
     <TrackingContext.Provider
@@ -228,10 +206,9 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useTracking(): TrackingContextValue {
+export function useTracking() {
   const context = useContext(TrackingContext);
-  if (!context) {
+  if (!context)
     throw new Error("useTracking must be used within a TrackingProvider");
-  }
   return context;
 }
