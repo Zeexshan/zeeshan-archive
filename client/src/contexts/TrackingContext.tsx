@@ -21,8 +21,9 @@ export interface TrackedMedia {
   dateCompleted: string | null;
 }
 
+// Your Real Google URL (DO NOT CHANGE THIS if it is correct)
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbxOgVnMN9UX0ciZzEFpWflajHnH88bujC8tWp_xbaNiJFbCBaYnAIhUXSgVxiHK2-EC/exec"; // Placeholder
+  "https://script.google.com/macros/s/AKfycbxOgVnMN9UX0ciZzEFpWflajHnH88bujC8tWp_xbaNiJFbCBaYnAIhUXSgVxiHK2-EC/exec";
 
 interface TrackingContextValue {
   isAvailable: boolean;
@@ -55,7 +56,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   const currentUser = localStorage.getItem("teleflix_user");
 
   // ---------------------------------------------------------
-  // REPLACE YOUR OLD fetchData WITH THIS NEW VERSION
+  // NEW ROBUST FETCH DATA FUNCTION
   // ---------------------------------------------------------
   const fetchData = useCallback(async () => {
     if (!currentUser) return;
@@ -85,6 +86,10 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const getTrackedData = useCallback(
     (mediaId: string): TrackedMedia | null => {
       return data[mediaId] || null;
@@ -96,16 +101,16 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     async (mediaId: string, mediaData: TrackedMedia): Promise<boolean> => {
       if (!currentUser) return false;
 
-      // 1. OPTIMISTIC UPDATE: Update the UI immediately (Don't wait for Google)
+      // 1. OPTIMISTIC UPDATE: Update the UI immediately
       setData((prev) => ({ ...prev, [mediaId]: mediaData }));
 
       // 2. Send to Google in the background
       try {
         fetch(API_URL, {
           method: "POST",
-          mode: "no-cors", // <--- IMPORTANT: This prevents CORS errors
+          mode: "no-cors",
           headers: {
-            "Content-Type": "text/plain", // <--- IMPORTANT: Avoids Preflight checks
+            "Content-Type": "text/plain",
           },
           body: JSON.stringify({
             user: currentUser,
@@ -113,10 +118,9 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
             ...mediaData,
           }),
         });
-        return true; // Always return true because we already updated the UI
+        return true;
       } catch (error) {
         console.error("Background sync failed:", error);
-        // Optional: Revert data here if you want strict safety
         return true;
       }
     },
@@ -127,21 +131,20 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     async (mediaId: string): Promise<boolean> => {
       if (!currentUser) return false;
       try {
-        const response = await fetch(API_URL, {
-          method: "POST", // Usually Google Apps Script uses POST for everything
+        await fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify({
             user: currentUser,
             id: mediaId,
             action: "delete",
           }),
         });
-        if (response.ok) {
-          const newData = { ...data };
-          delete newData[mediaId];
-          setData(newData);
-          return true;
-        }
-        return false;
+        const newData = { ...data };
+        delete newData[mediaId];
+        setData(newData);
+        return true;
       } catch (error) {
         console.error("Failed to delete data:", error);
         return false;
@@ -202,7 +205,6 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   }, [data]);
 
   const importData = useCallback((jsonString: string): boolean => {
-    // For now, keep local import logic if needed, but ideally it should push to API
     return false;
   }, []);
 
