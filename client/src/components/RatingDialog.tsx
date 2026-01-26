@@ -19,8 +19,8 @@ interface RatingDialogProps {
   mediaTitle: string;
   mediaPoster?: string | null;
   existingData: TrackedMedia | null;
-  onSave: (mediaId: string, data: TrackedMedia) => boolean;
-  onDelete: (mediaId: string) => boolean;
+  onSave: (mediaId: string, data: TrackedMedia) => Promise<boolean>;
+  onDelete: (mediaId: string) => Promise<boolean>;
 }
 
 const statusOptions: Array<{
@@ -78,7 +78,7 @@ export function RatingDialog({
     setShowRatingError(false);
   }, [existingData, isOpen]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (status === "completed" && rating === null) {
       setShowRatingError(true);
       return;
@@ -92,13 +92,13 @@ export function RatingDialog({
       dateCompleted: status === "completed" ? new Date().toISOString().split("T")[0] : null,
     };
     
-    if (onSave(mediaId, data)) {
+    if (await onSave(mediaId, data)) {
       onClose();
     }
   };
 
-  const handleDelete = () => {
-    if (onDelete(mediaId)) {
+  const handleDelete = async () => {
+    if (await onDelete(mediaId)) {
       onClose();
     }
   };

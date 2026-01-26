@@ -10,47 +10,13 @@ export interface TrackedMedia {
   dateCompleted: string | null;
 }
 
-interface TrackedMediaStore {
-  version: number;
-  data: Record<string, TrackedMedia>;
-}
-
-const STORAGE_KEY = "tele-flix-tracking";
-const CURRENT_VERSION = 1;
-
-function getInitialStore(): TrackedMediaStore {
-  return { version: CURRENT_VERSION, data: {} };
-}
-
-function loadFromStorage(): TrackedMediaStore {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return getInitialStore();
-    
-    const parsed = JSON.parse(stored) as TrackedMediaStore;
-    if (parsed.version !== CURRENT_VERSION) {
-      return getInitialStore();
-    }
-    return parsed;
-  } catch {
-    return getInitialStore();
-  }
-}
-
-function saveToStorage(store: TrackedMediaStore): boolean {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-    return true;
-  } catch {
-    return false;
-  }
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbwqoF-AatP4oYh5kX5n0z5m-5q0-5q0-5q0/exec"; // Placeholder
 
 interface TrackingContextValue {
   isAvailable: boolean;
   getTrackedData: (mediaId: string) => TrackedMedia | null;
-  saveTrackedData: (mediaId: string, data: TrackedMedia) => boolean;
-  deleteTrackedData: (mediaId: string) => boolean;
+  saveTrackedData: (mediaId: string, data: TrackedMedia) => Promise<boolean>;
+  deleteTrackedData: (mediaId: string) => Promise<boolean>;
   getAllTrackedMedia: () => Record<string, TrackedMedia>;
   getCompletedMedia: () => Array<{ id: string; data: TrackedMedia }>;
   getMediaByStatus: (status: WatchStatus) => Array<{ id: string; data: TrackedMedia }>;
@@ -70,67 +36,98 @@ interface TrackingContextValue {
 const TrackingContext = createContext<TrackingContextValue | null>(null);
 
 export function TrackingProvider({ children }: { children: ReactNode }) {
-  const [store, setStore] = useState<TrackedMediaStore>(getInitialStore);
+  const [data, setData] = useState<Record<string, TrackedMedia>>({});
   const [isAvailable, setIsAvailable] = useState(true);
+  const currentUser = localStorage.getItem("teleflix_user");
+
+  const fetchData = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      const response = await fetch(API_URL);
+      const json = await response.json();
+      if (json[currentUser]) {
+        setData(json[currentUser]);
+      } else {
+        setData({});
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
-    try {
-      const testKey = "__storage_test__";
-      localStorage.setItem(testKey, testKey);
-      localStorage.removeItem(testKey);
-      setIsAvailable(true);
-      setStore(loadFromStorage());
-    } catch {
-      setIsAvailable(false);
-    }
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
   const getTrackedData = useCallback((mediaId: string): TrackedMedia | null => {
-    return store.data[mediaId] || null;
-  }, [store]);
+    return data[mediaId] || null;
+  }, [data]);
 
-  const saveTrackedData = useCallback((mediaId: string, data: TrackedMedia): boolean => {
-    const newStore = {
-      ...store,
-      data: { ...store.data, [mediaId]: data }
-    };
-    const success = saveToStorage(newStore);
-    if (success) {
-      setStore(newStore);
+  const saveTrackedData = useCallback(async (mediaId: string, mediaData: TrackedMedia): Promise<boolean> => {
+    if (!currentUser) return false;
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          user: currentUser,
+          id: mediaId,
+          ...mediaData
+        }),
+      });
+      if (response.ok) {
+        setData(prev => ({ ...prev, [mediaId]: mediaData }));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Failed to save data:", error);
+      return false;
     }
-    return success;
-  }, [store]);
+  }, [currentUser]);
 
-  const deleteTrackedData = useCallback((mediaId: string): boolean => {
-    const newData = { ...store.data };
-    delete newData[mediaId];
-    const newStore = { ...store, data: newData };
-    const success = saveToStorage(newStore);
-    if (success) {
-      setStore(newStore);
+  const deleteTrackedData = useCallback(async (mediaId: string): Promise<boolean> => {
+    if (!currentUser) return false;
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST", // Usually Google Apps Script uses POST for everything
+        body: JSON.stringify({
+          user: currentUser,
+          id: mediaId,
+          action: "delete"
+        }),
+      });
+      if (response.ok) {
+        const newData = { ...data };
+        delete newData[mediaId];
+        setData(newData);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Failed to delete data:", error);
+      return false;
     }
-    return success;
-  }, [store]);
+  }, [currentUser, data]);
 
   const getAllTrackedMedia = useCallback((): Record<string, TrackedMedia> => {
-    return store.data;
-  }, [store]);
+    return data;
+  }, [data]);
 
   const getCompletedMedia = useCallback((): Array<{ id: string; data: TrackedMedia }> => {
-    return Object.entries(store.data)
-      .filter(([_, data]) => data.status === "completed")
-      .map(([id, data]) => ({ id, data }))
+    return Object.entries(data)
+      .filter(([_, d]) => d.status === "completed")
+      .map(([id, d]) => ({ id, data: d }))
       .sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
-  }, [store]);
+  }, [data]);
 
   const getMediaByStatus = useCallback((status: WatchStatus): Array<{ id: string; data: TrackedMedia }> => {
-    return Object.entries(store.data)
-      .filter(([_, data]) => data.status === status)
-      .map(([id, data]) => ({ id, data }));
-  }, [store]);
+    return Object.entries(data)
+      .filter(([_, d]) => d.status === status)
+      .map(([id, d]) => ({ id, data: d }));
+  }, [data]);
 
   const getStats = useCallback(() => {
-    const all = Object.values(store.data);
+    const all = Object.values(data);
     const completed = all.filter(d => d.status === "completed");
     const ratings = completed.filter(d => d.rating !== null).map(d => d.rating as number);
     
@@ -145,26 +142,15 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         ratings.filter(r => Math.floor(r) === i + 1).length
       )
     };
-  }, [store]);
+  }, [data]);
 
   const exportData = useCallback((): string => {
-    return JSON.stringify(store, null, 2);
-  }, [store]);
+    return JSON.stringify(data, null, 2);
+  }, [data]);
 
   const importData = useCallback((jsonString: string): boolean => {
-    try {
-      const imported = JSON.parse(jsonString) as TrackedMediaStore;
-      if (typeof imported.version !== "number" || typeof imported.data !== "object") {
-        return false;
-      }
-      const success = saveToStorage(imported);
-      if (success) {
-        setStore(imported);
-      }
-      return success;
-    } catch {
-      return false;
-    }
+    // For now, keep local import logic if needed, but ideally it should push to API
+    return false;
   }, []);
 
   return (

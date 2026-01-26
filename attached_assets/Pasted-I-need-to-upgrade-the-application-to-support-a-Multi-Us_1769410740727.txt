@@ -1,0 +1,37 @@
+I need to upgrade the application to support a Multi-User Login System so two different users can maintain separate Watchlists and Rankings using a Google Sheet backend.
+
+**Step 1: The Login UI (`client/src/pages/login.tsx`)**
+- Create a simple login page with "Username" and "Password" fields.
+- **Hardcoded Auth Logic:**
+  - Verify credentials against these hardcoded users:
+    - User: `zeeshan` | Pass: `Zeexshan.com1643`
+    - User: `sobia`   | Pass: `sobhondu`
+- **Action:**
+  - On success: Save the username to `localStorage` (key: `teleflix_user`) and redirect to `/` (Home).
+  - On failure: Show a generic "Invalid credentials" toast error.
+
+**Step 2: Protected Routes (`client/src/App.tsx`)**
+- Implement a `PrivateRoute` component that checks if `teleflix_user` exists in localStorage.
+- Protect the `/` (Home) and `/rankings` routes.
+- If the user is NOT logged in, redirect them to `/login`.
+- Ensure the `<Header />` component is hidden on the Login page.
+
+**Step 3: The Data Sync Hook (`client/src/hooks/useUserMedia.ts`)**
+- Rewrite this hook to sync with my Google Apps Script API.
+- **API Placeholder:** `const API_URL = "INSERT_GOOGLE_SHEET_URL_HERE";`
+- **Data Structure:**
+  - The API returns a JSON object grouped by user:
+    `{ "zeeshan": { "movie_1": {...} }, "sobia": { "movie_2": {...} } }`
+- **Read Logic (`useEffect`):**
+  - Get `teleflix_user` from localStorage.
+  - Fetch data from `API_URL`.
+  - Filter the data to ONLY retrieve the object belonging to the current user (e.g., `data["zeeshan"]`).
+  - Set this filtered data to state.
+- **Write Logic (`updateMovie`):**
+  - When sending a POST request to update a rating, include the `user` field in the body:
+    `{ user: currentUser, id: movie.id, status: ..., rating: ... }`
+  - This ensures the Google Sheet saves it to the correct user's row.
+
+**Step 4: Update `client/src/components/Header.tsx`**
+- Add a small "Logout" button on the right side.
+- Logic: Clear `localStorage` and reload the page to kick the user to the login screen.

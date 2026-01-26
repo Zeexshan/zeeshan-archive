@@ -1,5 +1,5 @@
-import { Link } from "wouter";
-import { Search, Film, Trophy } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Search, Film, Trophy, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUserMedia } from "@/hooks/useUserMedia";
@@ -13,8 +13,17 @@ interface HeaderProps {
 export function Header({ searchQuery, onSearchChange, totalMovies = 0 }: HeaderProps) {
   const { getStats } = useUserMedia();
   const stats = getStats();
+  const [location] = useLocation();
   
   const safeTotal = typeof totalMovies === "number" && !isNaN(totalMovies) ? totalMovies : 0;
+
+  const handleLogout = () => {
+    localStorage.removeItem("teleflix_user");
+    window.location.reload();
+  };
+
+  // Hide header on login page
+  if (location === "/login") return null;
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
@@ -41,17 +50,28 @@ export function Header({ searchQuery, onSearchChange, totalMovies = 0 }: HeaderP
             </div>
           </div>
           
-          <Link href="/rankings">
-            <Button variant="outline" className="gap-2" data-testid="button-rankings">
-              <Trophy className="w-4 h-4 text-yellow-500" />
-              <span className="hidden sm:inline">My Rankings</span>
-              {stats.total > 0 && (
-                <span className="bg-primary/20 text-primary text-xs px-1.5 py-0.5 rounded-full font-medium">
-                  {stats.total}
-                </span>
-              )}
+          <div className="flex items-center gap-2">
+            <Link href="/rankings">
+              <Button variant="outline" className="gap-2" data-testid="button-rankings">
+                <Trophy className="w-4 h-4 text-yellow-500" />
+                <span className="hidden sm:inline">My Rankings</span>
+                {stats.total > 0 && (
+                  <span className="bg-primary/20 text-primary text-xs px-1.5 py-0.5 rounded-full font-medium">
+                    {stats.total}
+                  </span>
+                )}
+              </Button>
+            </Link>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleLogout} 
+              data-testid="button-logout"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
             </Button>
-          </Link>
+          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">
