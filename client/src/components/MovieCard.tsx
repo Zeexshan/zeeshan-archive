@@ -60,10 +60,10 @@ export function MovieCard({ movie, index }: MovieCardProps) {
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
         </div>
 
-        <div className="p-3 flex flex-col gap-2 flex-1">
+        <div className="p-2 sm:p-3 flex flex-col gap-1.5 sm:gap-2 flex-1">
           <h3
             data-testid={`text-title-${safeId}`}
-            className="font-semibold text-sm text-foreground line-clamp-2 leading-tight min-h-[2.5rem]"
+            className="font-semibold text-xs sm:text-sm text-foreground line-clamp-2 leading-tight min-h-[2rem] sm:min-h-[2.5rem]"
             title={movie.title}
           >
             {movie.title}
@@ -71,20 +71,20 @@ export function MovieCard({ movie, index }: MovieCardProps) {
 
           <span
             data-testid={`text-size-${safeId}`}
-            className="text-xs text-muted-foreground"
+            className="text-[10px] sm:text-xs text-muted-foreground"
           >
             {movie.size}
           </span>
 
-          <div className="mt-auto flex flex-col gap-2">
+          <div className="mt-auto flex flex-col gap-1.5 sm:gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="w-full gap-2"
+              className="w-full gap-1.5 sm:gap-2 h-8 sm:h-9 text-[10px] sm:text-xs"
               onClick={() => setIsDialogOpen(true)}
               data-testid={`button-track-${safeId}`}
             >
-              <ListPlus className="w-3.5 h-3.5" />
+              <ListPlus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>{trackedData ? "Update" : "Track"}</span>
             </Button>
             
@@ -93,14 +93,15 @@ export function MovieCard({ movie, index }: MovieCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               data-testid={`link-watch-${safeId}`}
+              className="w-full"
             >
               <Button
-                className="w-full gap-2"
+                className="w-full gap-1.5 sm:gap-2 h-8 sm:h-9 text-[10px] sm:text-xs"
                 size="sm"
                 data-testid={`button-watch-${safeId}`}
               >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Watch on Telegram</span>
+                <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>Telegram</span>
               </Button>
             </a>
           </div>

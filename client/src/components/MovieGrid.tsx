@@ -101,7 +101,7 @@ export function MovieGrid({ items, searchQuery }: MovieGridProps) {
   return (
     <div
       data-testid="grid-movies"
-      className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"
     >
       {filteredItems.map((item, index) => {
         const key = item?.id || `item-${index}`;

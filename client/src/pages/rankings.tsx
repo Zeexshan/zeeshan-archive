@@ -191,42 +191,42 @@ export default function Rankings() {
           return (
             <div
               key={entry.id}
-              className="flex items-center gap-4 p-3 bg-card rounded-md hover-elevate"
+              className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
               data-testid={`ranking-row-${rank}`}
             >
-              <div className={`w-12 h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
-                <span className="text-white font-bold text-lg">{rank}</span>
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
+                <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
               </div>
               
               {item.poster ? (
-                <img src={item.poster} alt={item.title} className="w-12 h-16 object-cover rounded-md flex-shrink-0" />
+                <img src={item.poster} alt={item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
-                <div className="w-12 h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
-                  {item.type === "series" ? <Folder className="w-5 h-5 text-zinc-600" /> : <Film className="w-5 h-5 text-zinc-600" />}
+                <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
+                  {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
                 </div>
               )}
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground line-clamp-1">{item.title}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-xs">
+                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.title}</h3>
+                <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
                     {item.type === "series" ? "Series" : "Movie"}
                   </Badge>
                   {entry.data.review && (
-                    <span className="text-xs text-muted-foreground line-clamp-1">
-                      "{entry.data.review.slice(0, 50)}..."
+                    <span className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1 hidden xs:block">
+                      "{entry.data.review.slice(0, 30)}..."
                     </span>
                   )}
                 </div>
               </div>
               
               <div className="text-right flex-shrink-0">
-                <div className="flex items-center gap-1 justify-end">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-lg font-bold">{entry.data.rating}</span>
-                  <span className="text-muted-foreground">/10</span>
+                <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
+                  <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
+                  <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
+                  <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
                 </div>
-                <span className="text-xs text-muted-foreground">Top {percentile}%</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">Top {percentile}%</span>
               </div>
             </div>
           );
@@ -255,29 +255,29 @@ export default function Rankings() {
           return (
             <div
               key={entry.id}
-              className="flex items-center gap-4 p-3 bg-card rounded-md hover-elevate"
+              className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
             >
               {item.poster ? (
-                <img src={item.poster} alt={item.title} className="w-12 h-16 object-cover rounded-md flex-shrink-0" />
+                <img src={item.poster} alt={item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
-                <div className="w-12 h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
-                  {item.type === "series" ? <Folder className="w-5 h-5 text-zinc-600" /> : <Film className="w-5 h-5 text-zinc-600" />}
+                <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
+                  {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
                 </div>
               )}
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground line-clamp-1">{item.title}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-xs">
+                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.title}</h3>
+                <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
                     {item.type === "series" ? "Series" : "Movie"}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    Added {entry.data.dateAdded}
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">
+                    {entry.data.dateAdded}
                   </span>
                 </div>
               </div>
               
-              <StatusBadge status={entry.data.status} size="md" />
+              <StatusBadge status={entry.data.status} size="sm" />
             </div>
           );
         })}
@@ -320,14 +320,14 @@ export default function Rankings() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handleExport} data-testid="button-export">
-                <Download className="w-4 h-4 mr-1" />
-                Export
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Button variant="outline" size="sm" onClick={handleExport} data-testid="button-export" className="px-2 sm:px-3">
+                <Download className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">Export</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={handleImport} data-testid="button-import">
-                <Upload className="w-4 h-4 mr-1" />
-                Import
+              <Button variant="outline" size="sm" onClick={handleImport} data-testid="button-import" className="px-2 sm:px-3">
+                <Upload className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">Import</span>
               </Button>
             </div>
           </div>
@@ -335,24 +335,26 @@ export default function Rankings() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        <div className="flex flex-wrap gap-2 mb-6 border-b border-border pb-4">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <Button
-                key={tab.id}
-                variant={activeTab === tab.id ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setActiveTab(tab.id)}
-                className="gap-2"
-                data-testid={`tab-${tab.id}`}
-              >
-                <Icon className="w-4 h-4" />
-                {tab.label}
-                <Badge variant="secondary" className="ml-1">{tab.count}</Badge>
-              </Button>
-            );
-          })}
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+          <div className="flex gap-2 min-w-max border-b border-border pb-4">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <Button
+                  key={tab.id}
+                  variant={activeTab === tab.id ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setActiveTab(tab.id)}
+                  className="gap-2"
+                  data-testid={`tab-${tab.id}`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="whitespace-nowrap">{tab.label}</span>
+                  <Badge variant="secondary" className="ml-1">{tab.count}</Badge>
+                </Button>
+              );
+            })}
+          </div>
         </div>
 
         {activeTab === "rankings" && (
