@@ -54,25 +54,30 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   const [isAvailable, setIsAvailable] = useState(true);
   const currentUser = localStorage.getItem("teleflix_user");
 
+  // ---------------------------------------------------------
+  // REPLACE YOUR OLD fetchData WITH THIS NEW VERSION
+  // ---------------------------------------------------------
   const fetchData = useCallback(async () => {
     if (!currentUser) return;
 
     try {
-      console.log("Fetching data for:", currentUser); // Debug Log 1
+      console.log("🔍 Attempting to fetch for user:", currentUser);
       const response = await fetch(API_URL);
       const json = await response.json();
-      console.log("API returned keys:", Object.keys(json)); // Debug Log 2
 
-      // FIX: Find the user key ignoring Capitalization (e.g., "Zeeshan" == "zeeshan")
+      console.log("📂 Database Keys found:", Object.keys(json));
+
+      // SMART SEARCH: Find the key regardless of Capital Letters
+      // (This matches "Zeeshan" with "zeeshan", "ZEESHAN", etc.)
       const userKey = Object.keys(json).find(
-        (key) => key.toLowerCase() === currentUser.toLowerCase(),
+        (k) => k.toLowerCase() === currentUser.toLowerCase(),
       );
 
       if (userKey && json[userKey]) {
-        console.log("Found match:", userKey); // Debug Log 3
+        console.log("✅ Found match! Loading data for:", userKey);
         setData(json[userKey]);
       } else {
-        console.warn("No matching user found in DB");
+        console.warn("❌ No matching user found in Database.");
         setData({});
       }
     } catch (error) {
