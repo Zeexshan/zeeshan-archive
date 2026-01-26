@@ -1,6 +1,17 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
 
-export type WatchStatus = "plan_to_watch" | "watching" | "completed" | "dropped";
+export type WatchStatus =
+  | "plan_to_watch"
+  | "watching"
+  | "completed"
+  | "dropped";
 
 export interface TrackedMedia {
   status: WatchStatus;
@@ -10,7 +21,8 @@ export interface TrackedMedia {
   dateCompleted: string | null;
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwqoF-AatP4oYh5kX5n0z5m-5q0-5q0-5q0/exec"; // Placeholder
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbxOgVnMN9UX0ciZzEFpWflajHnH88bujC8tWp_xbaNiJFbCBaYnAIhUXSgVxiHK2-EC/exec"; // Placeholder
 
 interface TrackingContextValue {
   isAvailable: boolean;
@@ -19,7 +31,9 @@ interface TrackingContextValue {
   deleteTrackedData: (mediaId: string) => Promise<boolean>;
   getAllTrackedMedia: () => Record<string, TrackedMedia>;
   getCompletedMedia: () => Array<{ id: string; data: TrackedMedia }>;
-  getMediaByStatus: (status: WatchStatus) => Array<{ id: string; data: TrackedMedia }>;
+  getMediaByStatus: (
+    status: WatchStatus,
+  ) => Array<{ id: string; data: TrackedMedia }>;
   getStats: () => {
     total: number;
     planToWatch: number;
@@ -59,88 +73,115 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, [fetchData]);
 
-  const getTrackedData = useCallback((mediaId: string): TrackedMedia | null => {
-    return data[mediaId] || null;
-  }, [data]);
+  const getTrackedData = useCallback(
+    (mediaId: string): TrackedMedia | null => {
+      return data[mediaId] || null;
+    },
+    [data],
+  );
 
-  const saveTrackedData = useCallback(async (mediaId: string, mediaData: TrackedMedia): Promise<boolean> => {
-    if (!currentUser) return false;
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          user: currentUser,
-          id: mediaId,
-          ...mediaData
-        }),
-      });
-      if (response.ok) {
-        setData(prev => ({ ...prev, [mediaId]: mediaData }));
+  const saveTrackedData = useCallback(
+    async (mediaId: string, mediaData: TrackedMedia): Promise<boolean> => {
+      if (!currentUser) return false;
+
+      // 1. OPTIMISTIC UPDATE: Update the UI immediately (Don't wait for Google)
+      setData((prev) => ({ ...prev, [mediaId]: mediaData }));
+
+      // 2. Send to Google in the background
+      try {
+        fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors", // <--- IMPORTANT: This prevents CORS errors
+          headers: {
+            "Content-Type": "text/plain", // <--- IMPORTANT: Avoids Preflight checks
+          },
+          body: JSON.stringify({
+            user: currentUser,
+            id: mediaId,
+            ...mediaData,
+          }),
+        });
+        return true; // Always return true because we already updated the UI
+      } catch (error) {
+        console.error("Background sync failed:", error);
+        // Optional: Revert data here if you want strict safety
         return true;
       }
-      return false;
-    } catch (error) {
-      console.error("Failed to save data:", error);
-      return false;
-    }
-  }, [currentUser]);
+    },
+    [currentUser],
+  );
 
-  const deleteTrackedData = useCallback(async (mediaId: string): Promise<boolean> => {
-    if (!currentUser) return false;
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST", // Usually Google Apps Script uses POST for everything
-        body: JSON.stringify({
-          user: currentUser,
-          id: mediaId,
-          action: "delete"
-        }),
-      });
-      if (response.ok) {
-        const newData = { ...data };
-        delete newData[mediaId];
-        setData(newData);
-        return true;
+  const deleteTrackedData = useCallback(
+    async (mediaId: string): Promise<boolean> => {
+      if (!currentUser) return false;
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST", // Usually Google Apps Script uses POST for everything
+          body: JSON.stringify({
+            user: currentUser,
+            id: mediaId,
+            action: "delete",
+          }),
+        });
+        if (response.ok) {
+          const newData = { ...data };
+          delete newData[mediaId];
+          setData(newData);
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error("Failed to delete data:", error);
+        return false;
       }
-      return false;
-    } catch (error) {
-      console.error("Failed to delete data:", error);
-      return false;
-    }
-  }, [currentUser, data]);
+    },
+    [currentUser, data],
+  );
 
   const getAllTrackedMedia = useCallback((): Record<string, TrackedMedia> => {
     return data;
   }, [data]);
 
-  const getCompletedMedia = useCallback((): Array<{ id: string; data: TrackedMedia }> => {
+  const getCompletedMedia = useCallback((): Array<{
+    id: string;
+    data: TrackedMedia;
+  }> => {
     return Object.entries(data)
       .filter(([_, d]) => d.status === "completed")
       .map(([id, d]) => ({ id, data: d }))
       .sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
   }, [data]);
 
-  const getMediaByStatus = useCallback((status: WatchStatus): Array<{ id: string; data: TrackedMedia }> => {
-    return Object.entries(data)
-      .filter(([_, d]) => d.status === status)
-      .map(([id, d]) => ({ id, data: d }));
-  }, [data]);
+  const getMediaByStatus = useCallback(
+    (status: WatchStatus): Array<{ id: string; data: TrackedMedia }> => {
+      return Object.entries(data)
+        .filter(([_, d]) => d.status === status)
+        .map(([id, d]) => ({ id, data: d }));
+    },
+    [data],
+  );
 
   const getStats = useCallback(() => {
     const all = Object.values(data);
-    const completed = all.filter(d => d.status === "completed");
-    const ratings = completed.filter(d => d.rating !== null).map(d => d.rating as number);
-    
+    const completed = all.filter((d) => d.status === "completed");
+    const ratings = completed
+      .filter((d) => d.rating !== null)
+      .map((d) => d.rating as number);
+
     return {
       total: all.length,
-      planToWatch: all.filter(d => d.status === "plan_to_watch").length,
-      watching: all.filter(d => d.status === "watching").length,
+      planToWatch: all.filter((d) => d.status === "plan_to_watch").length,
+      watching: all.filter((d) => d.status === "watching").length,
       completed: completed.length,
-      dropped: all.filter(d => d.status === "dropped").length,
-      averageRating: ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0,
-      ratingDistribution: Array.from({ length: 10 }, (_, i) => 
-        ratings.filter(r => Math.floor(r) === i + 1).length
-      )
+      dropped: all.filter((d) => d.status === "dropped").length,
+      averageRating:
+        ratings.length > 0
+          ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+          : 0,
+      ratingDistribution: Array.from(
+        { length: 10 },
+        (_, i) => ratings.filter((r) => Math.floor(r) === i + 1).length,
+      ),
     };
   }, [data]);
 
@@ -154,18 +195,20 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <TrackingContext.Provider value={{
-      isAvailable,
-      getTrackedData,
-      saveTrackedData,
-      deleteTrackedData,
-      getAllTrackedMedia,
-      getCompletedMedia,
-      getMediaByStatus,
-      getStats,
-      exportData,
-      importData
-    }}>
+    <TrackingContext.Provider
+      value={{
+        isAvailable,
+        getTrackedData,
+        saveTrackedData,
+        deleteTrackedData,
+        getAllTrackedMedia,
+        getCompletedMedia,
+        getMediaByStatus,
+        getStats,
+        exportData,
+        importData,
+      }}
+    >
       {children}
     </TrackingContext.Provider>
   );
