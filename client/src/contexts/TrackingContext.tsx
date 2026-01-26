@@ -56,22 +56,29 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
 
   const fetchData = useCallback(async () => {
     if (!currentUser) return;
+
     try {
+      console.log("Fetching data for:", currentUser); // Debug Log 1
       const response = await fetch(API_URL);
       const json = await response.json();
-      if (json[currentUser]) {
-        setData(json[currentUser]);
+      console.log("API returned keys:", Object.keys(json)); // Debug Log 2
+
+      // FIX: Find the user key ignoring Capitalization (e.g., "Zeeshan" == "zeeshan")
+      const userKey = Object.keys(json).find(
+        (key) => key.toLowerCase() === currentUser.toLowerCase(),
+      );
+
+      if (userKey && json[userKey]) {
+        console.log("Found match:", userKey); // Debug Log 3
+        setData(json[userKey]);
       } else {
+        console.warn("No matching user found in DB");
         setData({});
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }
   }, [currentUser]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const getTrackedData = useCallback(
     (mediaId: string): TrackedMedia | null => {
