@@ -1,128 +1,91 @@
 [
   {
-    "type": "movie",
-    "id": "id-ep-04-love-chunibyo-other-delusions-an1me-hub-c36c82",
-    "title": "EP 04 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "256.4 MB",
-    "link": "https://t.me/c/3686417406/188",
+    "type": "series",
+    "id": "id--d41d8c",
+    "title": "",
     "poster": null,
     "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-03-love-chunibyo-other-delusions-an1me-hub-a497b9",
-    "title": "EP 03 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "252.4 MB",
-    "link": "https://t.me/c/3686417406/187",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-02-love-chunibyo-other-delusions-an1me-hub-cbd06e",
-    "title": "EP 02 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "241.4 MB",
-    "link": "https://t.me/c/3686417406/186",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-01-love-chunibyo-other-delusions-an1me-hub-8e26b6",
-    "title": "EP 01 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "258.3 MB",
-    "link": "https://t.me/c/3686417406/185",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-12-love-chunibyo-other-delusions-an1me-hub-33b98d",
-    "title": "EP 12 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "221.5 MB",
-    "link": "https://t.me/c/3686417406/184",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-11-love-chunibyo-other-delusions-an1me-hub-fdf7ca",
-    "title": "EP 11 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "225.5 MB",
-    "link": "https://t.me/c/3686417406/183",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-10-love-chunibyo-other-delusions-an1me-hub-6e6b38",
-    "title": "EP 10 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "224.9 MB",
-    "link": "https://t.me/c/3686417406/182",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-09-love-chunibyo-other-delusions-an1me-hub-d70202",
-    "title": "EP 09 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "230.0 MB",
-    "link": "https://t.me/c/3686417406/181",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-08-love-chunibyo-other-delusions-an1me-hub-d6978b",
-    "title": "EP 08 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "230.0 MB",
-    "link": "https://t.me/c/3686417406/180",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-07-love-chunibyo-other-delusions-an1me-hub-5edad2",
-    "title": "EP 07 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "224.5 MB",
-    "link": "https://t.me/c/3686417406/179",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-06-love-chunibyo-other-delusions-an1me-hub-d90468",
-    "title": "EP 06 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "245.9 MB",
-    "link": "https://t.me/c/3686417406/178",
-    "poster": null,
-    "overview": null,
-    "rating": 0
-  },
-  {
-    "type": "movie",
-    "id": "id-ep-05-love-chunibyo-other-delusions-an1me-hub-06a7bc",
-    "title": "EP 05 Love Chunibyo & Other Delusions! @AN1ME HUB",
-    "size": "238.7 MB",
-    "link": "https://t.me/c/3686417406/177",
-    "poster": null,
-    "overview": null,
-    "rating": 0
+    "rating": 0,
+    "episodes": [
+      {
+        "title": "EP-01 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-01 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "258.3 MB",
+        "link": "https://t.me/c/3686417406/185"
+      },
+      {
+        "title": "EP-02 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-02 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "241.4 MB",
+        "link": "https://t.me/c/3686417406/186"
+      },
+      {
+        "title": "EP-03 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-03 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "252.4 MB",
+        "link": "https://t.me/c/3686417406/187"
+      },
+      {
+        "title": "EP-04 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-04 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "256.4 MB",
+        "link": "https://t.me/c/3686417406/188"
+      },
+      {
+        "title": "EP-05 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-05 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "238.7 MB",
+        "link": "https://t.me/c/3686417406/177"
+      },
+      {
+        "title": "EP-06 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-06 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "245.9 MB",
+        "link": "https://t.me/c/3686417406/178"
+      },
+      {
+        "title": "EP-07 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-07 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "224.5 MB",
+        "link": "https://t.me/c/3686417406/179"
+      },
+      {
+        "title": "EP-08 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-08 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "230.0 MB",
+        "link": "https://t.me/c/3686417406/180"
+      },
+      {
+        "title": "EP-09 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-09 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "230.0 MB",
+        "link": "https://t.me/c/3686417406/181"
+      },
+      {
+        "title": "EP-10 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-10 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "224.9 MB",
+        "link": "https://t.me/c/3686417406/182"
+      },
+      {
+        "title": "EP-11 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-11 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "225.5 MB",
+        "link": "https://t.me/c/3686417406/183"
+      },
+      {
+        "title": "EP-12 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "episodeId": "EP-12 Love Chunibyo & Other Delusions! @AN1ME_HUB.mkv",
+        "size": "221.5 MB",
+        "link": "https://t.me/c/3686417406/184"
+      }
+    ],
+    "episodeCount": 12
   },
   {
     "type": "series",
-    "id": "id-banana-fish-4df5dc",
-    "title": "Banana Fish",
+    "id": "id-banana-fish-24e0b6",
+    "title": "Banana Fish -",
     "poster": "https://image.tmdb.org/t/p/w500/d2TW5Rtd0uCasHlQygsDfWCROl2.jpg",
     "overview": "A teenaged gang leader in New York City faces his abuser and rival gangs alongside a photojournalist from Japan as they investigate a deadly new drug.",
     "rating": 8.58,
@@ -774,13 +737,13 @@
   },
   {
     "type": "movie",
-    "id": "id-from-up-on-poppy-hill-fd4480",
-    "title": "From Up on Poppy Hill",
+    "id": "id-from-up-a26791",
+    "title": "From Up",
     "size": "1.2 GB",
     "link": "https://t.me/c/3686417406/70",
-    "poster": "https://image.tmdb.org/t/p/w500/rRLYX4RZIyloHSJwvZKAhphAjiB.jpg",
-    "overview": "Yokohama, 1963. Japan is picking itself up from the devastation of World War II and preparing to host the 1964 Olympics—and the mood is one of both optimism and conflict as the young generation struggles to throw off the shackles of a troubled past. Against this backdrop of hope and change, a friendship begins to blossom between high school students Umi and Shun—but a buried secret from their past emerges to cast a shadow on the future and pull them apart.",
-    "rating": 7.531
+    "poster": "https://image.tmdb.org/t/p/w500/9J8AR01KFsVIEjFJVB6OnB7KXGw.jpg",
+    "overview": "This movie was released by the U.S. Department of Labor as a way to document those who were involved with the cleanup of New York City after the 9/11 attack on the World Trade Center.",
+    "rating": 0.0
   },
   {
     "type": "movie",
@@ -814,8 +777,8 @@
   },
   {
     "type": "series",
-    "id": "id-my-hero-academia-you-re-next-406f43",
-    "title": "My Hero Academia You're Next",
+    "id": "id-my-hero-academia-you-re-next-bluray-963141",
+    "title": "My Hero Academia You're Next BluRay",
     "poster": "https://image.tmdb.org/t/p/w500/tTrI6PwqzxkgO3dvQ7BEKXM7SYR.jpg",
     "overview": "In a society devastated by the effects of an all-out war between heroes and villains, a mysterious giant fortress suddenly appears, engulfing towns and people one after another. Then, a man reminiscent of All Might, the 'symbol of peace', stands in front of Izuku and his friends...",
     "rating": 7.223,
@@ -849,11 +812,11 @@
   },
   {
     "type": "series",
-    "id": "id-your-name-614cff",
-    "title": "Your Name",
-    "poster": "https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg",
-    "overview": "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places. Mitsuha wakes up in Taki’s body, and he in hers. This bizarre occurrence continues to happen randomly, and the two must adjust their lives around each other.",
-    "rating": 8.478,
+    "id": "id-your-name-2160p-bluray-0437fc",
+    "title": "Your Name 2160p BluRay",
+    "poster": null,
+    "overview": null,
+    "rating": 0,
     "episodes": [
       {
         "title": "Your.Name.2016.2160p.BluRay.x265.HDR.6CH-Pahe.in_part000.mkv",
@@ -1039,8 +1002,8 @@
   },
   {
     "type": "movie",
-    "id": "id-angel-s-egg-dcd9ea",
-    "title": "Angel's Egg",
+    "id": "id-angel-s-egg-mkv-7a4a34",
+    "title": "Angel's Egg mkv",
     "size": "1.7 GB",
     "link": "https://t.me/c/3686417406/31",
     "poster": "https://image.tmdb.org/t/p/w500/dcEUGvckbePFzPKhGXnS9T3kZMG.jpg",
