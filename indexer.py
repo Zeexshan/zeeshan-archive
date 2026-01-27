@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Tele-Flix Smart Indexer (Final Fixed Version)
+Tele-Flix Smart Indexer (Anime & Movie Fix)
 -------------------------
-1. Fixes "Peer id invalid" (Restored the Dialog Sync).
-2. Stable IDs + Anime Grouping + Smart Search.
+1. Fixes "From Up on Poppy Hill" (removed 'on' from cutoff list).
+2. Fixes "Your Name 2160p" (added 2160p/BluRay/4k to cleaner).
+3. Includes PeerID Fix (Dialog Sync).
 """
 
 import os
@@ -33,32 +34,58 @@ def generate_stable_id(title: str) -> str:
     return f"id-{slug}-{hash_suffix}"
 
 def clean_title_for_search(filename: str) -> tuple:
+    """
+    Surgical Cleaner: Removes tech jargon but respects title words like 'on'.
+    """
+    # 1. Standard Cleanup
     name = re.sub(r'[_\.]', ' ', filename)
     name = re.sub(r'\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v)$', '', name, flags=re.IGNORECASE)
+    
+    # 2. Remove Junk Prefixes
     name = re.sub(r'^[Ww]atch\s+', '', name)
     name = re.sub(r'@\w+', '', name)
     name = re.sub(r'\[.*?\]', '', name) 
     name = re.sub(r'\(.*?\)', '', name)
-    name = re.sub(r'\b(English|Sub|Dub|Dual|Audio|online|Free|on|HiAnime|1080p|720p|480p|x264|x265)\b.*', '', name, flags=re.IGNORECASE)
 
+    # 3. THE FIX: "Cutoff" logic. 
+    # Everything after these words is considered junk.
+    # REMOVED: 'on', 'English' (Too dangerous for titles)
+    # ADDED: '2160p', 'BluRay', '4k', 'WebRip'
+    cutoff_keywords = [
+        r'Sub', r'Dub', r'Dual', r'Audio', r'online', r'Free', r'HiAnime',
+        r'1080p', r'720p', r'480p', r'2160p', r'4k', r'BluRay', r'WebRip', r'WEBRip',
+        r'x264', r'x265', r'HEVC', r'10bit', r'HDR'
+    ]
+    cutoff_pattern = r'\b(' + '|'.join(cutoff_keywords) + r')\b.*'
+    name = re.sub(cutoff_pattern, '', name, flags=re.IGNORECASE)
+
+    # 4. Remove remaining technical stray words (if they appeared in middle)
+    tech_trash = [
+        r'AAC', r'5\.1', r'7\.1', r'AC3', r'EAC3', r'DTS', r'TrueHD',
+        r'H\.264', r'H\.265', r'DVDRip', r'HDTV'
+    ]
+    name = re.sub(r'\b(' + '|'.join(tech_trash) + r')\b', '', name, flags=re.IGNORECASE)
+
+    # 5. Detect Episode Numbering
     episode_patterns = [
         r'[.\s_-](S\d+E\d+|S\d+|E\d+)',
         r'\b(Episode|Ep\.?|EP\-?)\s*\d+',
         r'\s-\s+\d+'
     ]
-    
     for pattern in episode_patterns:
         match = re.search(pattern, name, re.IGNORECASE)
         if match:
             name = name[:match.start()]
             break
 
+    # 6. Extract Year
     year_match = re.search(r'\b(19[2-9]\d|20[0-2]\d)\b', name)
     year = None
     if year_match:
         year = year_match.group(0)
         name = name.replace(year, "")
 
+    # 7. Final Polish
     name = re.sub(r'[^a-zA-Z0-9\s!&,\'-]', '', name)
     name = re.sub(r'\s+', ' ', name).strip()
     return (name, year)
@@ -85,25 +112,25 @@ def search_tmdb_recursive(title: str, year: str = None):
         except: pass
         return None
 
+    # Attempt 1: Full Title
     print(f"   🔎 Searching: '{title}'...")
     result = call_api(title)
     if result: return result
 
+    # Attempt 2: Smart Chopping
     words = title.split()
     if len(words) > 1:
+        # Try removing first word
         sub_title_1 = " ".join(words[1:]) 
         print(f"   ✂️  Trying: '{sub_title_1}'...")
         result = call_api(sub_title_1)
-        if result: 
-            print("   ✅ Match found via fallback!")
-            return result
+        if result: return result
 
+        # Try removing last word
         sub_title_2 = " ".join(words[:-1])
         print(f"   ✂️  Trying: '{sub_title_2}'...")
         result = call_api(sub_title_2)
-        if result:
-            print("   ✅ Match found via fallback!")
-            return result
+        if result: return result
 
     return None
 
@@ -129,15 +156,11 @@ async def scan_channel():
     tmdb_cache = {}
 
     async with app:
-        # --- FIX STARTS HERE ---
         print("Connected! Syncing dialogs to fix PeerID error...")
         try:
-            # We must fetch dialogs first so Pyrogram learns about the channels you are in.
-            async for dialog in app.get_dialogs():
-                pass
+            async for dialog in app.get_dialogs(): pass
         except Exception as e:
             print(f"Warning during dialog sync: {e}")
-        # --- FIX ENDS HERE ---
 
         print("Scanning channel...")
         async for message in app.get_chat_history(CHANNEL_ID):
