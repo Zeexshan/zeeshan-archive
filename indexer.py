@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Tele-Flix Smart Indexer (Stable ID Version)
+Tele-Flix Smart Indexer (Final Ultimate Version)
 -------------------------
-1. Fixes "Peer id invalid" by syncing dialogs first.
-2. Fixes TMDB Auth.
-3. Cleans 'DD+', '2013', '6CH' and other noise properly.
-4. Groups Series/Split-Movies automatically.
-5. [NEW] Generates STABLE IDs so ratings don't shift when new movies are added.
+1. Stable IDs: Ratings won't shift when you add new files.
+2. Anime Grouping: Detects ' - 01' and groups them properly.
+3. Smart Fallback: Finds movies even if the filename has junk like 'Watch_'.
+4. Auto-Retry: If search fails, chops words off until it finds a match.
 """
 
 import os
@@ -31,75 +30,98 @@ TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
 # -----------------------------------------------
 
 def generate_stable_id(title: str) -> str:
-    """
-    Creates a unique, stable ID from the title.
-    Example: "Iron Man" -> "id-iron-man-a1b2"
-    """
-    # Create a clean slug
+    """Creates a unique ID that stays the same forever."""
     slug = re.sub(r'[^a-zA-Z0-9]+', '-', title.lower()).strip('-')
-    # Add a short hash of the full title to prevent collisions
     hash_suffix = hashlib.md5(title.encode()).hexdigest()[:6]
     return f"id-{slug}-{hash_suffix}"
 
 def clean_title_for_search(filename: str) -> tuple:
-    """Uses Year Anchor strategy to extract title from filename."""
-    name = re.sub(r'\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v)$', '', filename, flags=re.IGNORECASE)
-    name = re.sub(r'[_\.\-\s]?(part|pt|cd|disc)\s*\d+', '', name, flags=re.IGNORECASE)
+    """Advanced Cleaner: Handles 'Watch_', 'EP-01', '@Tags', etc."""
+    # 1. Standard Cleanup
+    name = re.sub(r'[_\.]', ' ', filename)
+    name = re.sub(r'\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v)$', '', name, flags=re.IGNORECASE)
     
-    episode_match = re.search(r'[.\s_-](S\d+E\d+|S\d+|E\d+|Episode\s*\d+)', name, re.IGNORECASE)
-    if episode_match:
-        name = name[:episode_match.start()]
-    
-    year_match = re.search(r'[\.\s_\-\(\[]?(19[2-9]\d|20[0-2]\d)[\.\s_\-\)\]]?', name)
-    
-    if year_match:
-        title_part = name[:year_match.start()]
-        year = year_match.group(0).strip('._-()[] ')
-        title_part = title_part.replace('.', ' ').replace('_', ' ').replace('-', ' ')
-        title_part = re.sub(r'\s+', ' ', title_part).strip()
-        if title_part:
-            return (title_part, year)
-    
-    name = re.sub(r'\[.*?\]', '', name)
+    # 2. Remove Junk Prefixes/Suffixes
+    name = re.sub(r'^[Ww]atch\s+', '', name)
+    name = re.sub(r'@\w+', '', name)
+    name = re.sub(r'\[.*?\]', '', name) 
     name = re.sub(r'\(.*?\)', '', name)
-    name = name.replace('.', ' ').replace('_', ' ').replace('-', ' ')
+    name = re.sub(r'\b(English|Sub|Dub|Dual|Audio|online|Free|on|HiAnime|1080p|720p|480p|x264|x265)\b.*', '', name, flags=re.IGNORECASE)
+
+    # 3. Detect Episode Numbering (Anime & TV)
+    episode_patterns = [
+        r'[.\s_-](S\d+E\d+|S\d+|E\d+)',
+        r'\b(Episode|Ep\.?|EP\-?)\s*\d+',
+        r'\s-\s+\d+'  # Anime style " - 01"
+    ]
+    
+    for pattern in episode_patterns:
+        match = re.search(pattern, name, re.IGNORECASE)
+        if match:
+            name = name[:match.start()]
+            break
+
+    # 4. Extract Year
+    year_match = re.search(r'\b(19[2-9]\d|20[0-2]\d)\b', name)
+    year = None
+    if year_match:
+        year = year_match.group(0)
+        name = name.replace(year, "")
+
+    # 5. Final Polish
+    name = re.sub(r'[^a-zA-Z0-9\s!&,\'-]', '', name)
     name = re.sub(r'\s+', ' ', name).strip()
-    return (name, None)
+    return (name, year)
 
-def get_tmdb_metadata(title: str, year: str = None):
-    """Query TMDB for poster, overview, and rating."""
-    if not TMDB_API_KEY:
-        return None, None, 0
+def get_group_key(title: str) -> str:
+    """Normalizes title so 'Love, Chunibyo!' matches 'Love Chunibyo'."""
+    return re.sub(r'[^a-zA-Z0-9]', '', title.lower())
 
-    def do_search(query: str, search_year: str = None):
+def search_tmdb_recursive(title: str, year: str = None):
+    """The Smart Brain: Retries search if exact match fails."""
+    if not TMDB_API_KEY or not title: return None
+
+    def call_api(query):
         params = {
             "api_key": TMDB_API_KEY,
             "query": query,
             "include_adult": "false",
             "language": "en-US"
         }
-        if search_year: params["year"] = search_year
+        if year: params["year"] = year
         try:
-            response = requests.get(TMDB_SEARCH_URL, params=params, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
+            res = requests.get(TMDB_SEARCH_URL, params=params, timeout=5)
+            if res.status_code == 200:
+                data = res.json()
                 if data.get("results"): return data["results"][0]
         except: pass
         return None
 
-    def extract_result(result):
-        poster_path = result.get("poster_path")
-        full_poster = f"{TMDB_IMAGE_BASE}{poster_path}" if poster_path else None
-        return full_poster, result.get("overview"), result.get("vote_average")
+    # Attempt 1: Full Title
+    print(f"   🔎 Searching: '{title}'...")
+    result = call_api(title)
+    if result: return result
 
-    if year:
-        result = do_search(title, year)
-        if result: return extract_result(result)
-    
-    result = do_search(title)
-    if result: return extract_result(result)
-    
-    return None, None, 0
+    # Attempt 2: Smart Chopping (Recursive)
+    words = title.split()
+    if len(words) > 1:
+        # Try removing first word
+        sub_title_1 = " ".join(words[1:]) 
+        print(f"   ✂️  Trying: '{sub_title_1}'...")
+        result = call_api(sub_title_1)
+        if result: 
+            print("   ✅ Match found via fallback!")
+            return result
+
+        # Try removing last word
+        sub_title_2 = " ".join(words[:-1])
+        print(f"   ✂️  Trying: '{sub_title_2}'...")
+        result = call_api(sub_title_2)
+        if result:
+            print("   ✅ Match found via fallback!")
+            return result
+
+    return None
 
 def format_file_size(size_bytes: int) -> str:
     if size_bytes < 0: return "Unknown"
@@ -123,12 +145,7 @@ async def scan_channel():
     tmdb_cache = {}
 
     async with app:
-        print("Connected! Syncing dialogs...")
-        try:
-            async for dialog in app.get_dialogs(): pass
-        except: pass
-
-        print("Scanning channel...")
+        print("Connected! Scanning channel...")
         async for message in app.get_chat_history(CHANNEL_ID):
             if not message.media: continue
 
@@ -143,18 +160,21 @@ async def scan_channel():
 
             if not file_name: continue
 
-            title, year = clean_title_for_search(file_name)
-            group_key = title
+            search_title, year = clean_title_for_search(file_name)
+            group_key = get_group_key(search_title)
+            
+            # STABLE ID: Based on title, not order
+            stable_id = generate_stable_id(search_title)
 
-            # --- NEW STABLE ID GENERATION ---
-            # We generate the ID based on the Title, not the order.
-            stable_id = generate_stable_id(title)
+            if search_title not in tmdb_cache:
+                metadata = search_tmdb_recursive(search_title, year)
+                if metadata:
+                    poster = f"{TMDB_IMAGE_BASE}{metadata.get('poster_path')}" if metadata.get("poster_path") else None
+                    tmdb_cache[search_title] = (poster, metadata.get("overview"), metadata.get("vote_average"))
+                else:
+                    tmdb_cache[search_title] = (None, None, 0)
 
-            if group_key not in tmdb_cache:
-                print(f"Searching: '{title}'" + (f" ({year})" if year else ""))
-                tmdb_cache[group_key] = get_tmdb_metadata(title, year)
-
-            poster, overview, rating = tmdb_cache[group_key]
+            poster, overview, rating = tmdb_cache[search_title]
 
             episode_data = {
                 "title": file_name, 
@@ -169,8 +189,8 @@ async def scan_channel():
             else:
                 grouped_content[group_key] = {
                     "type": "movie",
-                    "id": stable_id,  # <--- USES STABLE ID NOW
-                    "title": title,
+                    "id": stable_id, 
+                    "title": search_title,
                     "poster": poster,
                     "overview": overview,
                     "rating": rating,
@@ -178,11 +198,10 @@ async def scan_channel():
                 }
 
     final_list = []
-    for title, data in grouped_content.items():
+    for key, data in grouped_content.items():
         if len(data["episodes"]) > 1:
-            data["type"] = "series"
-            data["episodeCount"] = len(data["episodes"])
             data["episodes"].sort(key=lambda x: x['title'])
+            data["episodeCount"] = len(data["episodes"])
             final_list.append(data)
         else:
             single_ep = data["episodes"][0]
@@ -202,7 +221,7 @@ async def scan_channel():
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(final_list, f, indent=2, ensure_ascii=False)
 
-    print(f"\n🎉 Saved {len(final_list)} items to {OUTPUT_FILE} (Stable IDs Active)")
+    print(f"\n🎉 Saved {len(final_list)} items to {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     asyncio.run(scan_channel())
