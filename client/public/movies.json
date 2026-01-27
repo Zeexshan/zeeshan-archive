@@ -737,13 +737,13 @@
   },
   {
     "type": "movie",
-    "id": "id-from-up-a26791",
-    "title": "From Up",
+    "id": "id-from-up-on-poppy-hill-fd4480",
+    "title": "From Up on Poppy Hill",
     "size": "1.2 GB",
     "link": "https://t.me/c/3686417406/70",
-    "poster": "https://image.tmdb.org/t/p/w500/9J8AR01KFsVIEjFJVB6OnB7KXGw.jpg",
-    "overview": "This movie was released by the U.S. Department of Labor as a way to document those who were involved with the cleanup of New York City after the 9/11 attack on the World Trade Center.",
-    "rating": 0.0
+    "poster": "https://image.tmdb.org/t/p/w500/rRLYX4RZIyloHSJwvZKAhphAjiB.jpg",
+    "overview": "Yokohama, 1963. Japan is picking itself up from the devastation of World War II and preparing to host the 1964 Olympics—and the mood is one of both optimism and conflict as the young generation struggles to throw off the shackles of a troubled past. Against this backdrop of hope and change, a friendship begins to blossom between high school students Umi and Shun—but a buried secret from their past emerges to cast a shadow on the future and pull them apart.",
+    "rating": 7.531
   },
   {
     "type": "movie",
@@ -777,8 +777,8 @@
   },
   {
     "type": "series",
-    "id": "id-my-hero-academia-you-re-next-bluray-963141",
-    "title": "My Hero Academia You're Next BluRay",
+    "id": "id-my-hero-academia-you-re-next-406f43",
+    "title": "My Hero Academia You're Next",
     "poster": "https://image.tmdb.org/t/p/w500/tTrI6PwqzxkgO3dvQ7BEKXM7SYR.jpg",
     "overview": "In a society devastated by the effects of an all-out war between heroes and villains, a mysterious giant fortress suddenly appears, engulfing towns and people one after another. Then, a man reminiscent of All Might, the 'symbol of peace', stands in front of Izuku and his friends...",
     "rating": 7.223,
@@ -812,11 +812,11 @@
   },
   {
     "type": "series",
-    "id": "id-your-name-2160p-bluray-0437fc",
-    "title": "Your Name 2160p BluRay",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
+    "id": "id-your-name-614cff",
+    "title": "Your Name",
+    "poster": "https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg",
+    "overview": "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places. Mitsuha wakes up in Taki’s body, and he in hers. This bizarre occurrence continues to happen randomly, and the two must adjust their lives around each other.",
+    "rating": 8.478,
     "episodes": [
       {
         "title": "Your.Name.2016.2160p.BluRay.x265.HDR.6CH-Pahe.in_part000.mkv",
