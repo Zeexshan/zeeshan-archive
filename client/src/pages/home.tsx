@@ -3,10 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { MovieGrid } from "@/components/MovieGrid";
 import { LoadingState } from "@/components/LoadingState";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ArchiveItem } from "@shared/schema";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [category, setCategory] = useState("anime");
 
   const { data, isLoading, error } = useQuery<ArchiveItem[]>({
     queryKey: ["/movies.json"],
@@ -21,6 +23,13 @@ export default function Home() {
 
   // SAFETY CHECK: Ensure 'data' is actually an array before using it
   const safeItems: ArchiveItem[] = Array.isArray(data) ? data : [];
+
+  const filteredItems = safeItems.filter((item) => {
+    const matchesCategory = item.category === category;
+    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (item.customTitle && item.customTitle.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
 
   if (isLoading) {
     return <LoadingState />;
@@ -46,10 +55,20 @@ export default function Home() {
       <Header
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        totalMovies={safeItems.length}
+        totalMovies={filteredItems.length}
       />
+      
+      <div className="max-w-7xl mx-auto px-4 pt-6">
+        <Tabs value={category} onValueChange={setCategory} className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="anime">Anime</TabsTrigger>
+            <TabsTrigger value="j-horror">J-Horror</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 py-6" data-testid="main-content">
-        <MovieGrid items={safeItems} searchQuery={searchQuery} />
+        <MovieGrid items={filteredItems} searchQuery={searchQuery} />
       </main>
     </div>
   );

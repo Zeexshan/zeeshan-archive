@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { Film, ExternalLink, Star, ListPlus } from "lucide-react";
+import { Film, ExternalLink, Star, ListPlus, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { RatingDialog } from "@/components/RatingDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useUserMedia } from "@/hooks/useUserMedia";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Movie } from "@shared/schema";
 
 interface MovieCardProps {
@@ -13,11 +19,35 @@ interface MovieCardProps {
 
 export function MovieCard({ movie, index }: MovieCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [customTitle, setCustomTitle] = useState(movie.customTitle || "");
+  const [customPoster, setCustomPoster] = useState(movie.customPoster || "");
+  
   const { getTrackedData, saveTrackedData, deleteTrackedData } = useUserMedia();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   
   const safeId = movie.id || `movie-${index}`;
   const trackedData = getTrackedData(safeId);
   
+  const displayTitle = movie.customTitle || movie.title;
+  const displayPoster = movie.customPoster || movie.poster;
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: { customTitle: string; customPoster: string }) => {
+      const res = await apiRequest("PATCH", `/api/movies/${movie.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/movies.json"] });
+      setIsEditDialogOpen(false);
+      toast({ title: "Updated", description: "Movie information updated successfully." });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update movie information.", variant: "destructive" });
+    }
+  });
+
   return (
     <>
       <div
@@ -25,10 +55,10 @@ export function MovieCard({ movie, index }: MovieCardProps) {
         className="movie-card-hover bg-card rounded-md flex flex-col group"
       >
         <div className="aspect-[2/3] rounded-t-md relative overflow-hidden">
-          {movie.poster ? (
+          {displayPoster ? (
             <img
-              src={movie.poster}
-              alt={movie.title}
+              src={displayPoster}
+              alt={displayTitle}
               className="w-full h-full object-cover"
               loading="lazy"
               data-testid={`img-poster-${safeId}`}
@@ -56,6 +86,16 @@ export function MovieCard({ movie, index }: MovieCardProps) {
               <StatusBadge status={trackedData.status} rating={trackedData.rating} />
             </div>
           )}
+
+          {/* Admin Edit Button */}
+          <Button
+            variant="secondary"
+            size="icon"
+            className="absolute top-2 right-12 h-8 w-8 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => setIsEditDialogOpen(true)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
           
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
         </div>
@@ -64,9 +104,9 @@ export function MovieCard({ movie, index }: MovieCardProps) {
           <h3
             data-testid={`text-title-${safeId}`}
             className="font-semibold text-xs sm:text-sm text-foreground line-clamp-2 leading-tight min-h-[2rem] sm:min-h-[2.5rem]"
-            title={movie.title}
+            title={displayTitle}
           >
-            {movie.title}
+            {displayTitle}
           </h3>
 
           <span
@@ -112,12 +152,49 @@ export function MovieCard({ movie, index }: MovieCardProps) {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         mediaId={safeId}
-        mediaTitle={movie.title}
-        mediaPoster={movie.poster}
+        mediaTitle={displayTitle}
+        mediaPoster={displayPoster}
         existingData={trackedData}
         onSave={saveTrackedData}
         onDelete={deleteTrackedData}
       />
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Movie Information</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Custom Title</Label>
+              <Input
+                id="title"
+                value={customTitle}
+                onChange={(e) => setCustomTitle(e.target.value)}
+                placeholder="Enter custom title"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="poster">Custom Poster URL</Label>
+              <Input
+                id="poster"
+                value={customPoster}
+                onChange={(e) => setCustomPoster(e.target.value)}
+                placeholder="Paste TMDB poster URL"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={() => updateMutation.mutate({ customTitle, customPoster })}
+              disabled={updateMutation.isPending}
+            >
+              {updateMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

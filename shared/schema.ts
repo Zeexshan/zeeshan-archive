@@ -12,6 +12,10 @@ export const movies = pgTable("movies", {
   poster: text("poster"),
   overview: text("overview"),
   rating: real("rating"),
+  category: text("category").default("anime"),
+  customTitle: text("custom_title"),
+  customPoster: text("custom_poster"),
+  customOverview: text("custom_overview"),
 });
 
 export const insertMovieSchema = createInsertSchema(movies).omit({
@@ -36,6 +40,10 @@ export interface Movie {
   poster: string | null;
   overview: string | null;
   rating: number | null;
+  category?: string;
+  customTitle?: string | null;
+  customPoster?: string | null;
+  customOverview?: string | null;
 }
 
 // Series type - contains multiple episodes
@@ -46,6 +54,10 @@ export interface Series {
   poster: string | null;
   overview: string | null;
   rating: number | null;
+  category?: string;
+  customTitle?: string | null;
+  customPoster?: string | null;
+  customOverview?: string | null;
   episodeCount: number;
   episodes: Episode[];
 }

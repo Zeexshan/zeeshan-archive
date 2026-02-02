@@ -20,8 +20,10 @@ API_ID = os.environ.get("TELEGRAM_API_ID")
 API_HASH = os.environ.get("TELEGRAM_API_HASH")
 TMDB_API_KEY = os.environ.get("TMDB_API_KEY")
 
-CHANNEL_ID = -1003686417406
-CHANNEL_LINK_ID = "3686417406"
+CHANNELS = [
+    {"id": -1003838058874, "link_id": "3838058874", "category": "anime"},
+    {"id": -1003747953815, "link_id": "3747953815", "category": "j-horror"}
+]
 OUTPUT_FILE = "client/public/movies.json"
 
 TMDB_SEARCH_URL = "https://api.themoviedb.org/3/search/multi"
@@ -155,6 +157,21 @@ async def scan_channel():
     grouped_content = {}
     tmdb_cache = {}
 
+    # Load existing data to preserve manual overrides
+    existing_overrides = {}
+    if os.path.exists(OUTPUT_FILE):
+        try:
+            with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+                existing_data = json.load(f)
+                for item in existing_data:
+                    if item.get("customTitle") or item.get("customPoster"):
+                        existing_overrides[item["id"]] = {
+                            "customTitle": item.get("customTitle"),
+                            "customPoster": item.get("customPoster"),
+                            "customOverview": item.get("customOverview")
+                        }
+        except: pass
+
     async with app:
         print("Connected! Syncing dialogs to fix PeerID error...")
         try:
@@ -162,55 +179,61 @@ async def scan_channel():
         except Exception as e:
             print(f"Warning during dialog sync: {e}")
 
-        print("Scanning channel...")
-        async for message in app.get_chat_history(CHANNEL_ID):
-            if not message.media: continue
+        for channel in CHANNELS:
+            print(f"Scanning channel: {channel['category']} ({channel['id']})...")
+            async for message in app.get_chat_history(channel["id"]):
+                if not message.media: continue
 
-            file_name = None
-            file_size = 0
-            if message.video:
-                file_name = message.video.file_name
-                file_size = message.video.file_size
-            elif message.document:
-                file_name = message.document.file_name
-                file_size = message.document.file_size
+                file_name = None
+                file_size = 0
+                if message.video:
+                    file_name = message.video.file_name
+                    file_size = message.video.file_size
+                elif message.document:
+                    file_name = message.document.file_name
+                    file_size = message.document.file_size
 
-            if not file_name: continue
+                if not file_name: continue
 
-            search_title, year = clean_title_for_search(file_name)
-            group_key = get_group_key(search_title)
-            stable_id = generate_stable_id(search_title)
+                search_title, year = clean_title_for_search(file_name)
+                group_key = f"{channel['category']}_{get_group_key(search_title)}"
+                stable_id = generate_stable_id(f"{channel['category']}_{search_title}")
 
-            if search_title not in tmdb_cache:
-                metadata = search_tmdb_recursive(search_title, year)
-                if metadata:
-                    poster = f"{TMDB_IMAGE_BASE}{metadata.get('poster_path')}" if metadata.get("poster_path") else None
-                    tmdb_cache[search_title] = (poster, metadata.get("overview"), metadata.get("vote_average"))
-                else:
-                    tmdb_cache[search_title] = (None, None, 0)
+                if search_title not in tmdb_cache:
+                    metadata = search_tmdb_recursive(search_title, year)
+                    if metadata:
+                        poster = f"{TMDB_IMAGE_BASE}{metadata.get('poster_path')}" if metadata.get("poster_path") else None
+                        tmdb_cache[search_title] = (poster, metadata.get("overview"), metadata.get("vote_average"))
+                    else:
+                        tmdb_cache[search_title] = (None, None, 0)
 
-            poster, overview, rating = tmdb_cache[search_title]
+                poster, overview, rating = tmdb_cache[search_title]
 
-            episode_data = {
-                "title": file_name, 
-                "episodeId": file_name, 
-                "size": format_file_size(file_size or 0),
-                "link": f"https://t.me/c/{CHANNEL_LINK_ID}/{message.id}"
-            }
-
-            if group_key in grouped_content:
-                grouped_content[group_key]["episodes"].append(episode_data)
-                grouped_content[group_key]["type"] = "series"
-            else:
-                grouped_content[group_key] = {
-                    "type": "movie",
-                    "id": stable_id, 
-                    "title": search_title,
-                    "poster": poster,
-                    "overview": overview,
-                    "rating": rating,
-                    "episodes": [episode_data]
+                episode_data = {
+                    "title": file_name, 
+                    "episodeId": file_name, 
+                    "size": format_file_size(file_size or 0),
+                    "link": f"https://t.me/c/{channel['link_id']}/{message.id}"
                 }
+
+                if group_key in grouped_content:
+                    grouped_content[group_key]["episodes"].append(episode_data)
+                    grouped_content[group_key]["type"] = "series"
+                else:
+                    overrides = existing_overrides.get(stable_id, {})
+                    grouped_content[group_key] = {
+                        "type": "movie",
+                        "id": stable_id, 
+                        "title": search_title,
+                        "poster": poster,
+                        "overview": overview,
+                        "rating": rating,
+                        "category": channel["category"],
+                        "customTitle": overrides.get("customTitle"),
+                        "customPoster": overrides.get("customPoster"),
+                        "customOverview": overrides.get("customOverview"),
+                        "episodes": [episode_data]
+                    }
 
     final_list = []
     for key, data in grouped_content.items():
@@ -228,7 +251,11 @@ async def scan_channel():
                 "link": single_ep["link"],
                 "poster": data["poster"],
                 "overview": data["overview"],
-                "rating": data["rating"]
+                "rating": data["rating"],
+                "category": data.get("category", "anime"),
+                "customTitle": data.get("customTitle"),
+                "customPoster": data.get("customPoster"),
+                "customOverview": data.get("customOverview")
             }
             final_list.append(movie_obj)
 
