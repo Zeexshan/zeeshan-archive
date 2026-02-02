@@ -156,8 +156,8 @@ export default function Rankings() {
                   <span className="text-white font-bold text-sm">{rank}</span>
                 </div>
                 <div className="aspect-[2/3]">
-                  {item.poster ? (
-                    <img src={item.poster} alt={item.title} className="w-full h-full object-cover" />
+                  {(item.customPoster || item.poster) ? (
+                    <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
                       {item.type === "series" ? <Folder className="w-8 h-8 text-zinc-600" /> : <Film className="w-8 h-8 text-zinc-600" />}
@@ -165,7 +165,7 @@ export default function Rankings() {
                   )}
                 </div>
                 <div className="p-2">
-                  <h3 className="text-sm font-medium line-clamp-1">{item.title}</h3>
+                  <h3 className="text-sm font-medium line-clamp-1">{item.customTitle || item.title}</h3>
                   <div className="flex items-center gap-1 mt-1">
                     <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
                     <span className="text-xs font-medium">{entry.data.rating}/10</span>
@@ -198,8 +198,8 @@ export default function Rankings() {
                 <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
               </div>
               
-              {item.poster ? (
-                <img src={item.poster} alt={item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
+            {item.customPoster || item.poster ? (
+                <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
                 <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
                   {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
@@ -207,7 +207,7 @@ export default function Rankings() {
               )}
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.title}</h3>
+                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.customTitle || item.title}</h3>
                 <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
                   <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
                     {item.type === "series" ? "Series" : "Movie"}
@@ -257,8 +257,8 @@ export default function Rankings() {
               key={entry.id}
               className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
             >
-              {item.poster ? (
-                <img src={item.poster} alt={item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
+            {item.customPoster || item.poster ? (
+                <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
                 <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
                   {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
@@ -266,7 +266,7 @@ export default function Rankings() {
               )}
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.title}</h3>
+                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.customTitle || item.title}</h3>
                 <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
                   <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
                     {item.type === "series" ? "Series" : "Movie"}

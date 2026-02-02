@@ -33,6 +33,9 @@ export function MovieGrid({ items, searchQuery }: MovieGridProps) {
     return results.map((result) => result.item);
   }, [fuse, safeItems, searchQuery]);
 
+  // Multi-episode check
+  const isSeries = (item: any) => item.type === "series" || (item.episodes && item.episodes.length > 1);
+
   // Early return if no items
   if (!safeItems || safeItems.length === 0) {
     return (
@@ -105,7 +108,7 @@ export function MovieGrid({ items, searchQuery }: MovieGridProps) {
     >
       {filteredItems.map((item, index) => {
         const key = item?.id || `item-${index}`;
-        if (item?.type === "series") {
+        if (isSeries(item)) {
           return <SeriesCard key={key} series={item as Series} index={index} />;
         }
         return <MovieCard key={key} movie={item as Movie} index={index} />;

@@ -1,16 +1,22 @@
 import { useState } from "react";
-import { Folder, Star, Play, ExternalLink, ListPlus } from "lucide-react";
+import { Folder, Star, Play, ExternalLink, ListPlus, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StatusBadge } from "@/components/StatusBadge";
 import { RatingDialog } from "@/components/RatingDialog";
 import { useUserMedia } from "@/hooks/useUserMedia";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Series } from "@shared/schema";
 
 interface SeriesCardProps {
@@ -21,10 +27,35 @@ interface SeriesCardProps {
 export function SeriesCard({ series, index }: SeriesCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [customTitle, setCustomTitle] = useState(series.customTitle || "");
+  const [customPoster, setCustomPoster] = useState(series.customPoster || "");
+  
   const { getTrackedData, saveTrackedData, deleteTrackedData } = useUserMedia();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   
   const safeId = series.id || `series-${index}`;
   const trackedData = getTrackedData(safeId);
+
+  const isAdmin = localStorage.getItem("teleflix_user") === "zeeshan";
+  const displayTitle = series.customTitle || series.title;
+  const displayPoster = series.customPoster || series.poster;
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: { customTitle: string; customPoster: string; customOverview: string }) => {
+      const res = await apiRequest("PATCH", `/api/movies/${series.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/movies.json"] });
+      setIsEditDialogOpen(false);
+      toast({ title: "Updated", description: "Series information updated successfully." });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update series information.", variant: "destructive" });
+    }
+  });
 
   return (
     <>
@@ -38,10 +69,10 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
           <div className="absolute inset-0 translate-x-0.5 -translate-y-0.5 bg-zinc-600/50 rounded-t-md" />
           
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-t-md overflow-hidden">
-            {series.poster ? (
+            {displayPoster ? (
               <img
-                src={series.poster}
-                alt={series.title}
+                src={displayPoster}
+                alt={displayTitle}
                 className="w-full h-full object-cover"
                 loading="lazy"
                 data-testid={`img-poster-${safeId}`}
@@ -70,6 +101,21 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
               <StatusBadge status={trackedData.status} rating={trackedData.rating} />
             </div>
           )}
+
+          {/* Admin Edit Button */}
+          {isAdmin && (
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute top-2 right-12 h-8 w-8 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
           
           <div
             data-testid={`badge-episodes-${safeId}`}
@@ -87,9 +133,9 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
           <h3
             data-testid={`text-title-${safeId}`}
             className="font-semibold text-xs sm:text-sm text-foreground line-clamp-2 leading-tight min-h-[2rem] sm:min-h-[2.5rem]"
-            title={series.title}
+            title={displayTitle}
           >
-            {series.title}
+            {displayTitle}
           </h3>
 
           <span
@@ -133,13 +179,13 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
           <DialogHeader className="p-4 pb-0">
             <DialogTitle className="flex items-center gap-2" data-testid={`dialog-title-${safeId}`}>
               <Folder className="w-5 h-5 text-primary" />
-              {series.title}
+              {displayTitle}
             </DialogTitle>
           </DialogHeader>
           
-          {series.overview && (
+          {(series.customOverview || series.overview) && (
             <p className="px-4 text-sm text-muted-foreground line-clamp-3" data-testid={`dialog-overview-${safeId}`}>
-              {series.overview}
+              {series.customOverview || series.overview}
             </p>
           )}
           
@@ -180,12 +226,49 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
         isOpen={isRatingOpen}
         onClose={() => setIsRatingOpen(false)}
         mediaId={safeId}
-        mediaTitle={series.title}
-        mediaPoster={series.poster}
+        mediaTitle={displayTitle}
+        mediaPoster={displayPoster}
         existingData={trackedData}
         onSave={saveTrackedData}
         onDelete={deleteTrackedData}
       />
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Series Information</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Custom Title</Label>
+              <Input
+                id="title"
+                value={customTitle}
+                onChange={(e) => setCustomTitle(e.target.value)}
+                placeholder="Enter custom title"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="poster">Custom Poster URL</Label>
+              <Input
+                id="poster"
+                value={customPoster}
+                onChange={(e) => setCustomPoster(e.target.value)}
+                placeholder="Paste TMDB poster URL"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={() => updateMutation.mutate({ customTitle, customPoster, customOverview: series.customOverview || "" })}
+              disabled={updateMutation.isPending}
+            >
+              {updateMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

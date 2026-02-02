@@ -30,11 +30,13 @@ export function MovieCard({ movie, index }: MovieCardProps) {
   const safeId = movie.id || `movie-${index}`;
   const trackedData = getTrackedData(safeId);
   
+  const isAdmin = localStorage.getItem("teleflix_user") === "zeeshan";
+  
   const displayTitle = movie.customTitle || movie.title;
   const displayPoster = movie.customPoster || movie.poster;
 
   const updateMutation = useMutation({
-    mutationFn: async (data: { customTitle: string; customPoster: string }) => {
+    mutationFn: async (data: { customTitle: string; customPoster: string; customOverview: string }) => {
       const res = await apiRequest("PATCH", `/api/movies/${movie.id}`, data);
       return res.json();
     },
@@ -88,14 +90,16 @@ export function MovieCard({ movie, index }: MovieCardProps) {
           )}
 
           {/* Admin Edit Button */}
-          <Button
-            variant="secondary"
-            size="icon"
-            className="absolute top-2 right-12 h-8 w-8 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={() => setIsEditDialogOpen(true)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute top-2 right-12 h-8 w-8 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setIsEditDialogOpen(true)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
           
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
         </div>
@@ -187,7 +191,7 @@ export function MovieCard({ movie, index }: MovieCardProps) {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
             <Button 
-              onClick={() => updateMutation.mutate({ customTitle, customPoster })}
+              onClick={() => updateMutation.mutate({ customTitle, customPoster, customOverview: movie.customOverview || "" })}
               disabled={updateMutation.isPending}
             >
               {updateMutation.isPending ? "Saving..." : "Save Changes"}
