@@ -94,8 +94,11 @@ export function MovieCard({ movie, index }: MovieCardProps) {
             <Button
               variant="secondary"
               size="icon"
-              className="absolute top-2 right-12 h-8 w-8 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => setIsEditDialogOpen(true)}
+              className="absolute top-2 right-12 h-8 w-8 bg-zinc-900/90 text-white shadow-lg border border-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
             >
               <Edit className="h-4 w-4" />
             </Button>
