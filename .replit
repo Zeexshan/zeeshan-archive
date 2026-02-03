@@ -42,3 +42,6 @@ waitForPort = 5000
 
 [userenv.shared]
 TMDB_API_KEY = "cd9b23373783387f6c5a726936f45666"
+
+[agent]
+expertMode = true

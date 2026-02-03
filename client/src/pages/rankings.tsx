@@ -141,10 +141,29 @@ export default function Rankings() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {completedMedia.map((entry, index) => {
             const item = itemsMap.get(entry.id);
-            if (!item) return null;
-            
             const rank = index + 1;
             const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
+            
+            if (!item) {
+              return (
+                <div
+                  key={entry.id}
+                  className="relative bg-card rounded-md overflow-hidden p-3 border border-dashed border-muted-foreground/20"
+                  data-testid={`ranking-card-missing-${rank}`}
+                >
+                  <div className={`absolute top-2 left-2 z-10 w-8 h-8 ${bgColor} rounded-md flex items-center justify-center`}>
+                    <span className="text-white font-bold text-sm">{rank}</span>
+                  </div>
+                  <div className="pt-8 text-center">
+                    <p className="text-xs text-muted-foreground font-medium mb-1">Unknown Media</p>
+                    <div className="flex items-center gap-1 justify-center">
+                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                      <span className="text-xs font-medium">{entry.data.rating}/10</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
             
             return (
               <div
@@ -182,11 +201,34 @@ export default function Rankings() {
       <div className="space-y-2">
         {completedMedia.map((entry, index) => {
           const item = itemsMap.get(entry.id);
-          if (!item) return null;
-          
           const rank = index + 1;
           const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
-          const percentile = Math.round((1 - rank / completedMedia.length) * 100);
+          const percentile = Math.round((1 - rank / (completedMedia.length || 1)) * 100);
+          
+          if (!item) {
+            return (
+              <div
+                key={entry.id}
+                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-muted-foreground/20"
+                data-testid={`ranking-row-missing-${rank}`}
+              >
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
+                  <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-muted-foreground">Unknown Media (ID: {entry.id})</h3>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">This item was tracked but is no longer in the catalog.</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
+                    <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
+                    <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
+                    <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
+                  </div>
+                </div>
+              </div>
+            );
+          }
           
           return (
             <div
@@ -198,7 +240,7 @@ export default function Rankings() {
                 <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
               </div>
               
-            {item.customPoster || item.poster ? (
+              {item.customPoster || item.poster ? (
                 <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
                 <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
@@ -250,14 +292,32 @@ export default function Rankings() {
       <div className="space-y-2">
         {items.map((entry) => {
           const item = itemsMap.get(entry.id);
-          if (!item) return null;
+          
+          if (!item) {
+            return (
+              <div
+                key={entry.id}
+                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-muted-foreground/20"
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-muted-foreground">Unknown Media (ID: {entry.id})</h3>
+                  <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">
+                      Added: {entry.data.dateAdded}
+                    </span>
+                  </div>
+                </div>
+                <StatusBadge status={entry.data.status} size="sm" />
+              </div>
+            );
+          }
           
           return (
             <div
               key={entry.id}
               className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
             >
-            {item.customPoster || item.poster ? (
+              {item.customPoster || item.poster ? (
                 <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
                 <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">

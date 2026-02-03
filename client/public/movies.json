@@ -88,11 +88,11 @@
   },
   {
     "type": "series",
-    "id": "id-anime-banana-fish-3c7608",
-    "title": "Banana Fish -",
-    "poster": "https://image.tmdb.org/t/p/w500/d2TW5Rtd0uCasHlQygsDfWCROl2.jpg",
-    "overview": "A teenaged gang leader in New York City faces his abuser and rival gangs alongside a photojournalist from Japan as they investigate a deadly new drug.",
-    "rating": 8.581,
+    "id": "id-anime-cappybarra-banana-fish-93d61f",
+    "title": "cappybarra Banana Fish -",
+    "poster": null,
+    "overview": null,
+    "rating": 0,
     "category": "anime",
     "customTitle": null,
     "customPoster": null,
@@ -1054,8 +1054,8 @@
   },
   {
     "type": "movie",
-    "id": "id-anime-angel-s-egg-mkv-ad4505",
-    "title": "Angel's Egg mkv",
+    "id": "id-anime-angel-s-egg-819e6b",
+    "title": "Angel's Egg",
     "poster": "https://image.tmdb.org/t/p/w500/dcEUGvckbePFzPKhGXnS9T3kZMG.jpg",
     "overview": "In the ruins of a strange city, a young girl takes care of a large egg she holds carefully in her arms. She bonds with a boy who is searching for a bird he saw in a dream.",
     "rating": 7.733,
@@ -1250,82 +1250,84 @@
     "episodeCount": 28
   },
   {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-part001-mkv-f366b1",
-    "title": "Ju-on part001 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
+    "type": "series",
+    "id": "id-j-horror-ju-on-mkv-6ac01a",
+    "title": "Ju-on mkv",
+    "poster": "https://image.tmdb.org/t/p/w500/s3Sg0H1J5MctEEhgMxH57WIF1jE.jpg",
+    "overview": "The supernatural grudge manifests itself by way of a strange cyst growing in the body of a young woman, slowly draining all life from her in revenge for... what?",
+    "rating": 5.117,
     "category": "j-horror",
     "customTitle": null,
     "customPoster": null,
     "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/15"
+    "episodes": [
+      {
+        "title": "Ju-on (2002) part001.mkv",
+        "episodeId": "Ju-on (2002) part001.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/15"
+      },
+      {
+        "title": "Ju-on (2002) part002.mkv",
+        "episodeId": "Ju-on (2002) part002.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/2"
+      },
+      {
+        "title": "Ju-on (2002) part003.mkv",
+        "episodeId": "Ju-on (2002) part003.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/3"
+      }
+    ],
+    "episodeCount": 3
   },
   {
-    "type": "movie",
-    "id": "id-j-horror-meatball-machine-part004-mkv-ae06dc",
-    "title": "Meatball Machine part004 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
+    "type": "series",
+    "id": "id-j-horror-meatball-machine-mkv-6fb912",
+    "title": "Meatball Machine mkv",
+    "poster": "https://image.tmdb.org/t/p/w500/szggz8oSi9ZIszL14rHTiahOLMm.jpg",
+    "overview": "Capable of making bio-mechanical weapons out of human flesh, alien parasites grotesquely invade the Earth, turning their hosts into maniacal killers who seek and destroy each other to the bloody death! And yes, it s also a human love story, even though the budding romantics are infested with slimy, tumor-like globules.",
+    "rating": 5.378,
     "category": "j-horror",
     "customTitle": null,
     "customPoster": null,
     "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/14"
+    "episodes": [
+      {
+        "title": "Meatball Machine (2005) part001.mkv",
+        "episodeId": "Meatball Machine (2005) part001.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/11"
+      },
+      {
+        "title": "Meatball Machine (2005) part002.mkv",
+        "episodeId": "Meatball Machine (2005) part002.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/12"
+      },
+      {
+        "title": "Meatball Machine (2005) part003.mkv",
+        "episodeId": "Meatball Machine (2005) part003.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/13"
+      },
+      {
+        "title": "Meatball Machine (2005) part004.mkv",
+        "episodeId": "Meatball Machine (2005) part004.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/14"
+      }
+    ],
+    "episodeCount": 4
   },
   {
     "type": "movie",
-    "id": "id-j-horror-meatball-machine-part003-mkv-3dec60",
-    "title": "Meatball Machine part003 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/13"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-meatball-machine-part002-mkv-1de467",
-    "title": "Meatball Machine part002 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/12"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-meatball-machine-part001-mkv-e082aa",
-    "title": "Meatball Machine part001 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/11"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-the-grudge-2-part001-mkv-9cd988",
-    "title": "Ju-On The Grudge 2 part001 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
+    "id": "id-j-horror-ju-on-the-grudge-2-mkv-557714",
+    "title": "Ju-On The Grudge 2 mkv",
+    "poster": "https://image.tmdb.org/t/p/w500/agI9bflzv44lVsbah2dtdkkUqoW.jpg",
+    "overview": "When the cast and crew of a paranormal TV reality program decide to shoot in the house of the original Saeki hauntings, a series of strange events unfold at the location.",
+    "rating": 6.449,
     "category": "j-horror",
     "customTitle": null,
     "customPoster": null,
@@ -1334,115 +1336,69 @@
     "link": "https://t.me/c/3747953815/10"
   },
   {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-the-curse-2-part003-mkv-6308f2",
-    "title": "ju-on the curse 2 part003 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
+    "type": "series",
+    "id": "id-j-horror-ju-on-the-curse-2-mkv-66361b",
+    "title": "ju-on the curse 2 mkv",
+    "poster": "https://image.tmdb.org/t/p/w500/22nmKcoPG5gJ0gLrnSTZqo9yYvL.jpg",
+    "overview": "On his request, the sensitive sister of a real estate agent visits a house he intends to put up for sale, only to cross paths with its resident curse.",
+    "rating": 6.249,
     "category": "j-horror",
     "customTitle": null,
     "customPoster": null,
     "customOverview": null,
-    "size": "80.6 MB",
-    "link": "https://t.me/c/3747953815/9"
+    "episodes": [
+      {
+        "title": "ju-on the curse 2 (2000) part001.mkv",
+        "episodeId": "ju-on the curse 2 (2000) part001.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/7"
+      },
+      {
+        "title": "ju-on the curse 2 (2000) part002.mkv",
+        "episodeId": "ju-on the curse 2 (2000) part002.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/8"
+      },
+      {
+        "title": "ju-on the curse 2 (2000) part003.mkv",
+        "episodeId": "ju-on the curse 2 (2000) part003.mkv",
+        "size": "80.6 MB",
+        "link": "https://t.me/c/3747953815/9"
+      }
+    ],
+    "episodeCount": 3
   },
   {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-the-curse-2-part002-mkv-3a1631",
-    "title": "ju-on the curse 2 part002 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
+    "type": "series",
+    "id": "id-j-horror-ju-on-black-ghost-mkv-c1cfd8",
+    "title": "ju-on black ghost mkv",
+    "poster": "https://image.tmdb.org/t/p/w500/s3Sg0H1J5MctEEhgMxH57WIF1jE.jpg",
+    "overview": "The supernatural grudge manifests itself by way of a strange cyst growing in the body of a young woman, slowly draining all life from her in revenge for... what?",
+    "rating": 5.117,
     "category": "j-horror",
     "customTitle": null,
     "customPoster": null,
     "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/8"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-the-curse-2-part001-mkv-366186",
-    "title": "ju-on the curse 2 part001 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/7"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-black-ghost-part003-mkv-83ec59",
-    "title": "ju-on black ghost part003 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.3 GB",
-    "link": "https://t.me/c/3747953815/6"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-black-ghost-part002-mkv-2a3aa4",
-    "title": "ju-on black ghost part002 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/5"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-black-ghost-part001-mkv-ba1783",
-    "title": "ju-on black ghost part001 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/4"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-part003-mkv-1f6fab",
-    "title": "Ju-on part003 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/3"
-  },
-  {
-    "type": "movie",
-    "id": "id-j-horror-ju-on-part002-mkv-57e1d0",
-    "title": "Ju-on part002 mkv",
-    "poster": null,
-    "overview": null,
-    "rating": 0,
-    "category": "j-horror",
-    "customTitle": null,
-    "customPoster": null,
-    "customOverview": null,
-    "size": "1.9 GB",
-    "link": "https://t.me/c/3747953815/2"
+    "episodes": [
+      {
+        "title": "ju-on black ghost (2009) part001.mkv",
+        "episodeId": "ju-on black ghost (2009) part001.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/4"
+      },
+      {
+        "title": "ju-on black ghost (2009) part002.mkv",
+        "episodeId": "ju-on black ghost (2009) part002.mkv",
+        "size": "1.9 GB",
+        "link": "https://t.me/c/3747953815/5"
+      },
+      {
+        "title": "ju-on black ghost (2009) part003.mkv",
+        "episodeId": "ju-on black ghost (2009) part003.mkv",
+        "size": "1.3 GB",
+        "link": "https://t.me/c/3747953815/6"
+      }
+    ],
+    "episodeCount": 3
   }
 ]
