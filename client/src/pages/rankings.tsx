@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { 
   Trophy, Star, ArrowLeft, Download, Upload, Grid, List, 
-  Filter, ChevronDown, Film, Folder, Eye, Bookmark, XCircle 
+  Filter, ChevronDown, Film, Folder, Eye, Bookmark, XCircle, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +14,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useUserMedia, type WatchStatus } from "@/hooks/useUserMedia";
-import { StatusBadge, getStatusLabel } from "@/components/StatusBadge";
-import type { ArchiveItem } from "@shared/schema";
+import { StatusBadge } from "@/components/StatusBadge";
+import type { Movie, Series } from "@shared/schema";
 
+type ArchiveItem = Movie | Series;
 type SortOption = "rating_desc" | "rating_asc" | "recent" | "alpha";
 type FilterOption = "all" | "high" | "medium" | "low";
 type ViewMode = "list" | "grid";
@@ -40,10 +41,11 @@ export default function Rankings() {
     getStats, 
     exportData, 
     importData,
-    isAvailable 
+    isAvailable,
+    deleteTrackedData
   } = useUserMedia();
 
-  const { data: archiveItems } = useQuery<ArchiveItem[]>({
+  const { data: movies = [] } = useQuery<ArchiveItem[]>({
     queryKey: ["/movies.json"],
     queryFn: async () => {
       const res = await fetch("/movies.json");
@@ -54,17 +56,17 @@ export default function Rankings() {
 
   const itemsMap = useMemo(() => {
     const map = new Map<string, ArchiveItem>();
-    if (archiveItems) {
-      archiveItems.forEach(item => map.set(item.id, item));
+    if (movies) {
+      movies.forEach(item => map.set(item.id, item));
     }
     return map;
-  }, [archiveItems]);
+  }, [movies]);
 
   const stats = getStats();
 
   const completedMedia = useMemo(() => {
     const list = getCompletedMedia();
-    return list.map(entry => {
+    let mapped = list.map(entry => {
       // Find by ID first
       let item = itemsMap.get(entry.id);
       
@@ -76,8 +78,65 @@ export default function Rankings() {
       }
       
       return { ...entry, item };
-    }).sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
-  }, [getCompletedMedia, itemsMap, movies]);
+    });
+    
+    // Apply filters
+    if (filterBy === "high") mapped = mapped.filter(i => (i.data.rating || 0) >= 8);
+    else if (filterBy === "medium") mapped = mapped.filter(i => (i.data.rating || 0) >= 5 && (i.data.rating || 0) < 8);
+    else if (filterBy === "low") mapped = mapped.filter(i => (i.data.rating || 0) < 5);
+
+    // Apply sorting
+    if (sortBy === "rating_desc") mapped.sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
+    else if (sortBy === "rating_asc") mapped.sort((a, b) => (a.data.rating || 0) - (b.data.rating || 0));
+    else if (sortBy === "alpha") mapped.sort((a, b) => {
+      const titleA = a.item?.customTitle || a.item?.title || a.data.title || "";
+      const titleB = b.item?.customTitle || b.item?.title || b.data.title || "";
+      return titleA.localeCompare(titleB);
+    });
+    else if (sortBy === "recent") mapped.sort((a, b) => 
+      (b.data.dateCompleted || "").localeCompare(a.data.dateCompleted || "")
+    );
+
+    return mapped;
+  }, [getCompletedMedia, itemsMap, movies, filterBy, sortBy]);
+
+  const getListByStatus = (status: WatchStatus) => getMediaByStatus(status);
+
+  const handleExport = () => {
+    const data = exportData();
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tele-flix-tracking-${new Date().toISOString().split("T")[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const content = ev.target?.result as string;
+          importData(content);
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
+  };
+
+  const tabs = [
+    { id: "rankings" as TabOption, label: "Rankings", icon: Trophy, count: stats.completed },
+    { id: "plan_to_watch" as TabOption, label: "Plan to Watch", icon: Bookmark, count: stats.planToWatch },
+    { id: "watching" as TabOption, label: "Watching", icon: Eye, count: stats.watching },
+    { id: "dropped" as TabOption, label: "Dropped", icon: XCircle, count: stats.dropped },
+  ];
 
   const renderRankingsList = () => {
     if (completedMedia.length === 0) {
@@ -280,34 +339,56 @@ export default function Rankings() {
     return (
       <div className="space-y-2">
         {items.map((entry) => {
-          const item = itemsMap.get(entry.id);
+          let item = itemsMap.get(entry.id);
+          
+          if (!item && entry.data.title) {
+            item = movies.find(m => 
+              (m.customTitle || m.title).toLowerCase() === entry.data.title?.toLowerCase()
+            );
+          }
           
           if (!item) {
             return (
               <div
                 key={entry.id}
-                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-muted-foreground/20"
+                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-red-900/40"
               >
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Unknown Media (ID: {entry.id})</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Missing Item</span>
+                    <h3 className="font-semibold text-sm text-muted-foreground line-clamp-1">{entry.data.title || "Unknown Media"}</h3>
+                  </div>
                   <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
                     <span className="text-[10px] sm:text-xs text-muted-foreground">
                       Added: {entry.data.dateAdded}
                     </span>
                   </div>
                 </div>
-                <StatusBadge status={entry.data.status} size="sm" />
+                <div className="flex items-center gap-3">
+                  <StatusBadge status={entry.data.status} size="sm" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                    onClick={() => deleteTrackedData(entry.id)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             );
           }
           
+          const displayTitle = item.customTitle || item.title;
+          const displayPoster = item.customPoster || item.poster;
+
           return (
             <div
               key={entry.id}
               className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
             >
-              {item.customPoster || item.poster ? (
-                <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
+              {displayPoster ? (
+                <img src={displayPoster} alt={displayTitle} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
               ) : (
                 <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
                   {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
@@ -315,7 +396,7 @@ export default function Rankings() {
               )}
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.customTitle || item.title}</h3>
+                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{displayTitle}</h3>
                 <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
                   <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
                     {item.type === "series" ? "Series" : "Movie"}
