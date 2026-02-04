@@ -129,17 +129,18 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             </div>
           )}
 
-          {/* Admin Edit Button */}
+          {/* Admin Edit Button - Visible to everyone for now */}
           <Button
             variant="secondary"
-            size="icon"
-            className="absolute top-2 right-12 h-8 w-8 bg-zinc-900 text-white shadow-lg border border-zinc-700 z-20"
+            size="sm"
+            className="absolute top-2 right-12 h-8 px-2 bg-zinc-900 text-white shadow-lg border border-zinc-700 z-20 font-bold text-[10px]"
             onClick={(e) => {
               e.stopPropagation();
               setIsEditDialogOpen(true);
             }}
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-3 w-3 mr-1" />
+            EDIT
           </Button>
 
           <div

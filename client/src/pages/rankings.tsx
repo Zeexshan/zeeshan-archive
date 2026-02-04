@@ -63,62 +63,21 @@ export default function Rankings() {
   const stats = getStats();
 
   const completedMedia = useMemo(() => {
-    let items = getCompletedMedia();
-    
-    if (filterBy === "high") items = items.filter(i => (i.data.rating || 0) >= 8);
-    else if (filterBy === "medium") items = items.filter(i => (i.data.rating || 0) >= 5 && (i.data.rating || 0) < 8);
-    else if (filterBy === "low") items = items.filter(i => (i.data.rating || 0) < 5);
-
-    if (sortBy === "rating_asc") items = [...items].sort((a, b) => (a.data.rating || 0) - (b.data.rating || 0));
-    else if (sortBy === "alpha") items = [...items].sort((a, b) => {
-      const itemA = itemsMap.get(a.id);
-      const itemB = itemsMap.get(b.id);
-      return (itemA?.title || "").localeCompare(itemB?.title || "");
-    });
-    else if (sortBy === "recent") items = [...items].sort((a, b) => 
-      (b.data.dateCompleted || "").localeCompare(a.data.dateCompleted || "")
-    );
-
-    return items;
-  }, [getCompletedMedia, filterBy, sortBy, itemsMap]);
-
-  const getListByStatus = (status: WatchStatus) => getMediaByStatus(status);
-
-  const handleExport = () => {
-    const data = exportData();
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `tele-flix-tracking-${new Date().toISOString().split("T")[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImport = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const content = ev.target?.result as string;
-          importData(content);
-        };
-        reader.readAsText(file);
+    const list = getCompletedMedia();
+    return list.map(entry => {
+      // Find by ID first
+      let item = itemsMap.get(entry.id);
+      
+      // Fallback: Find by Title if ID mismatch
+      if (!item && entry.data.title) {
+        item = movies.find(m => 
+          (m.customTitle || m.title).toLowerCase() === entry.data.title?.toLowerCase()
+        );
       }
-    };
-    input.click();
-  };
-
-  const tabs = [
-    { id: "rankings" as TabOption, label: "Rankings", icon: Trophy, count: stats.completed },
-    { id: "plan_to_watch" as TabOption, label: "Plan to Watch", icon: Bookmark, count: stats.planToWatch },
-    { id: "watching" as TabOption, label: "Watching", icon: Eye, count: stats.watching },
-    { id: "dropped" as TabOption, label: "Dropped", icon: XCircle, count: stats.dropped },
-  ];
+      
+      return { ...entry, item };
+    }).sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
+  }, [getCompletedMedia, itemsMap, movies]);
 
   const renderRankingsList = () => {
     if (completedMedia.length === 0) {
@@ -140,7 +99,7 @@ export default function Rankings() {
       return (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {completedMedia.map((entry, index) => {
-            const item = itemsMap.get(entry.id);
+            const item = entry.item;
             const rank = index + 1;
             const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
             
@@ -148,18 +107,29 @@ export default function Rankings() {
               return (
                 <div
                   key={entry.id}
-                  className="relative bg-card rounded-md overflow-hidden p-3 border border-dashed border-muted-foreground/20"
+                  className="relative bg-card rounded-md overflow-hidden p-3 border border-dashed border-red-900/40 flex flex-col h-full"
                   data-testid={`ranking-card-missing-${rank}`}
                 >
                   <div className={`absolute top-2 left-2 z-10 w-8 h-8 ${bgColor} rounded-md flex items-center justify-center`}>
                     <span className="text-white font-bold text-sm">{rank}</span>
                   </div>
-                  <div className="pt-8 text-center">
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Unknown Media (ID: {entry.id})</p>
-                    <div className="flex items-center gap-1 justify-center">
-                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                      <span className="text-xs font-medium">{entry.data.rating}/10</span>
+                  <div className="pt-8 text-center flex-1 flex flex-col justify-between">
+                    <div>
+                      <p className="text-[10px] text-red-400 font-bold mb-1 uppercase tracking-wider">Missing Item</p>
+                      <p className="text-xs font-medium text-foreground line-clamp-2 mb-2">{entry.data.title || "Unknown Media"}</p>
+                      <div className="flex items-center gap-1 justify-center mb-4">
+                        <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                        <span className="text-xs font-medium text-white">{entry.data.rating}/10</span>
+                      </div>
                     </div>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="w-full h-7 text-[10px]"
+                      onClick={() => deleteTrackedData(entry.id)}
+                    >
+                      Delete Tracker
+                    </Button>
                   </div>
                 </div>
               );
@@ -202,83 +172,96 @@ export default function Rankings() {
 
     return (
       <div className="space-y-2">
-          {completedMedia.map((entry, index) => {
-            const item = itemsMap.get(entry.id);
-            const rank = index + 1;
-            const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
-            const percentile = Math.round((1 - rank / (completedMedia.length || 1)) * 100);
-            
-            if (!item) {
-              return (
-                <div
-                  key={entry.id}
-                  className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-muted-foreground/20"
-                  data-testid={`ranking-row-missing-${rank}`}
-                >
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
-                    <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm text-muted-foreground">Unknown Media (ID: {entry.id})</h3>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground">This item was tracked but is no longer in the catalog.</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
-                      <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
-                      <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-            
-            const displayTitle = item.customTitle || item.title;
-            const displayPoster = item.customPoster || item.poster;
-
+        {completedMedia.map((entry, index) => {
+          const item = entry.item;
+          const rank = index + 1;
+          const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
+          const percentile = Math.round((1 - rank / (completedMedia.length || 1)) * 100);
+          
+          if (!item) {
             return (
               <div
                 key={entry.id}
-                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
-                data-testid={`ranking-row-${rank}`}
+                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-red-900/40"
+                data-testid={`ranking-row-missing-${rank}`}
               >
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
                   <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
                 </div>
-                
-                {displayPoster ? (
-                  <img src={displayPoster} alt={displayTitle} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
-                ) : (
-                  <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
-                    {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
-                  </div>
-                )}
-                
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{displayTitle}</h3>
-                  <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
-                    <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
-                      {item.type === "series" ? "Series" : "Movie"}
-                    </Badge>
-                    {entry.data.review && (
-                      <span className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1 hidden xs:block">
-                        "{entry.data.review.slice(0, 30)}..."
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Missing Item</span>
+                    <h3 className="font-semibold text-sm text-foreground line-clamp-1">{entry.data.title || "Unknown Media"}</h3>
                   </div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">This item was tracked but its ID has changed or it was removed from the catalog.</p>
                 </div>
-                
-                <div className="text-right flex-shrink-0">
-                  <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
-                    <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
-                    <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
+                      <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
+                      <span className="text-base sm:text-lg font-bold text-white">{entry.data.rating}</span>
+                      <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
+                    </div>
                   </div>
-                  <span className="text-[10px] sm:text-xs text-muted-foreground">Top {percentile}%</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                    onClick={() => deleteTrackedData(entry.id)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             );
-          })}
+          }
+          
+          const displayTitle = item.customTitle || item.title;
+          const displayPoster = item.customPoster || item.poster;
+
+          return (
+            <div
+              key={entry.id}
+              className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
+              data-testid={`ranking-row-${rank}`}
+            >
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
+                <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
+              </div>
+              
+              {displayPoster ? (
+                <img src={displayPoster} alt={displayTitle} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
+              ) : (
+                <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
+                  {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
+                </div>
+              )}
+              
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{displayTitle}</h3>
+                <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
+                    {item.type === "series" ? "Series" : "Movie"}
+                  </Badge>
+                  {entry.data.review && (
+                    <span className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1 hidden xs:block">
+                      "{entry.data.review.slice(0, 30)}..."
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="text-right flex-shrink-0">
+                <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
+                  <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
+                  <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
+                  <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
+                </div>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">Top {percentile}%</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
