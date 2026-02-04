@@ -155,7 +155,7 @@ export default function Rankings() {
                     <span className="text-white font-bold text-sm">{rank}</span>
                   </div>
                   <div className="pt-8 text-center">
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Unknown Media</p>
+                    <p className="text-xs text-muted-foreground font-medium mb-1">Unknown Media (ID: {entry.id})</p>
                     <div className="flex items-center gap-1 justify-center">
                       <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
                       <span className="text-xs font-medium">{entry.data.rating}/10</span>
@@ -165,6 +165,9 @@ export default function Rankings() {
               );
             }
             
+            const displayTitle = item.customTitle || item.title;
+            const displayPoster = item.customPoster || item.poster;
+
             return (
               <div
                 key={entry.id}
@@ -175,8 +178,8 @@ export default function Rankings() {
                   <span className="text-white font-bold text-sm">{rank}</span>
                 </div>
                 <div className="aspect-[2/3]">
-                  {(item.customPoster || item.poster) ? (
-                    <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-full h-full object-cover" />
+                  {displayPoster ? (
+                    <img src={displayPoster} alt={displayTitle} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
                       {item.type === "series" ? <Folder className="w-8 h-8 text-zinc-600" /> : <Film className="w-8 h-8 text-zinc-600" />}
@@ -184,7 +187,7 @@ export default function Rankings() {
                   )}
                 </div>
                 <div className="p-2">
-                  <h3 className="text-sm font-medium line-clamp-1">{item.customTitle || item.title}</h3>
+                  <h3 className="text-sm font-medium line-clamp-1">{displayTitle}</h3>
                   <div className="flex items-center gap-1 mt-1">
                     <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
                     <span className="text-xs font-medium">{entry.data.rating}/10</span>
@@ -199,80 +202,83 @@ export default function Rankings() {
 
     return (
       <div className="space-y-2">
-        {completedMedia.map((entry, index) => {
-          const item = itemsMap.get(entry.id);
-          const rank = index + 1;
-          const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
-          const percentile = Math.round((1 - rank / (completedMedia.length || 1)) * 100);
-          
-          if (!item) {
+          {completedMedia.map((entry, index) => {
+            const item = itemsMap.get(entry.id);
+            const rank = index + 1;
+            const bgColor = rankColors[rank] || (rank <= 10 ? "bg-blue-600" : "bg-zinc-600");
+            const percentile = Math.round((1 - rank / (completedMedia.length || 1)) * 100);
+            
+            if (!item) {
+              return (
+                <div
+                  key={entry.id}
+                  className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-muted-foreground/20"
+                  data-testid={`ranking-row-missing-${rank}`}
+                >
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
+                    <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm text-muted-foreground">Unknown Media (ID: {entry.id})</h3>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">This item was tracked but is no longer in the catalog.</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
+                      <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
+                      <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
+                      <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            
+            const displayTitle = item.customTitle || item.title;
+            const displayPoster = item.customPoster || item.poster;
+
             return (
               <div
                 key={entry.id}
-                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card/50 rounded-md border border-dashed border-muted-foreground/20"
-                data-testid={`ranking-row-missing-${rank}`}
+                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
+                data-testid={`ranking-row-${rank}`}
               >
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
                   <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
                 </div>
+                
+                {displayPoster ? (
+                  <img src={displayPoster} alt={displayTitle} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
+                ) : (
+                  <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
+                    {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
+                  </div>
+                )}
+                
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Unknown Media (ID: {entry.id})</h3>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">This item was tracked but is no longer in the catalog.</p>
+                  <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{displayTitle}</h3>
+                  <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+                    <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
+                      {item.type === "series" ? "Series" : "Movie"}
+                    </Badge>
+                    {entry.data.review && (
+                      <span className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1 hidden xs:block">
+                        "{entry.data.review.slice(0, 30)}..."
+                      </span>
+                    )}
+                  </div>
                 </div>
+                
                 <div className="text-right flex-shrink-0">
                   <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
                     <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
                     <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
                     <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
                   </div>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">Top {percentile}%</span>
                 </div>
               </div>
             );
-          }
-          
-          return (
-            <div
-              key={entry.id}
-              className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 bg-card rounded-md hover-elevate"
-              data-testid={`ranking-row-${rank}`}
-            >
-              <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
-                <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
-              </div>
-              
-              {item.customPoster || item.poster ? (
-                <img src={item.customPoster || item.poster || ""} alt={item.customTitle || item.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
-              ) : (
-                <div className="w-10 h-14 sm:w-12 sm:h-16 bg-zinc-800 rounded-md flex items-center justify-center flex-shrink-0">
-                  {item.type === "series" ? <Folder className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" /> : <Film className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />}
-                </div>
-              )}
-              
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">{item.customTitle || item.title}</h3>
-                <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
-                  <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 py-0">
-                    {item.type === "series" ? "Series" : "Movie"}
-                  </Badge>
-                  {entry.data.review && (
-                    <span className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1 hidden xs:block">
-                      "{entry.data.review.slice(0, 30)}..."
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              <div className="text-right flex-shrink-0">
-                <div className="flex items-center gap-0.5 sm:gap-1 justify-end">
-                  <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-base sm:text-lg font-bold">{entry.data.rating}</span>
-                  <span className="text-[10px] sm:text-sm text-muted-foreground">/10</span>
-                </div>
-                <span className="text-[10px] sm:text-xs text-muted-foreground">Top {percentile}%</span>
-              </div>
-            </div>
-          );
-        })}
+          })}
       </div>
     );
   };

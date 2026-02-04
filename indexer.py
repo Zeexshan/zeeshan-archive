@@ -72,6 +72,8 @@ def clean_title_for_search(filename: str) -> tuple:
     # This ensures "Movie part001" and "Movie part002" become just "Movie"
     name = re.sub(r'\bpart\s*\d+\b', '', name, flags=re.IGNORECASE)
     name = re.sub(r'\bpt\s*\d+\b', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\bpart\s*\d+\b', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\bpt\s*\d+\b', '', name, flags=re.IGNORECASE)
 
     # 4. Cutoff logic (Rest of your existing logic)
     cutoff_keywords = [
