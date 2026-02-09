@@ -174,7 +174,12 @@ export default function Rankings() {
                   </div>
                   <div className="pt-8 text-center flex-1 flex flex-col justify-between">
                     <div>
-                      <p className="text-[10px] text-red-400 font-bold mb-1 uppercase tracking-wider">Missing Item</p>
+                      {entry.data.poster && (
+                        <div className="aspect-[2/3] mb-2 rounded overflow-hidden">
+                          <img src={entry.data.poster} alt={entry.data.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <p className="text-[10px] text-red-400 font-bold mb-1 uppercase tracking-wider">Catalog Link Broken</p>
                       <p className="text-xs font-medium text-foreground line-clamp-2 mb-2">{entry.data.title || "Unknown Media"}</p>
                       <div className="flex items-center gap-1 justify-center mb-4">
                         <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
@@ -247,12 +252,17 @@ export default function Rankings() {
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-md flex items-center justify-center flex-shrink-0`}>
                   <span className="text-white font-bold text-base sm:text-lg">{rank}</span>
                 </div>
+                
+                {entry.data.poster && (
+                  <img src={entry.data.poster} alt={entry.data.title} className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-md flex-shrink-0" />
+                )}
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Missing Item</span>
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Catalog Link Broken</span>
                     <h3 className="font-semibold text-sm text-foreground line-clamp-1">{entry.data.title || "Unknown Media"}</h3>
                   </div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">This item was tracked but its ID has changed or it was removed from the catalog.</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">ID changed, but your tracked info is shown above.</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="text-right">
@@ -355,7 +365,10 @@ export default function Rankings() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Missing Item</span>
+                    {entry.data.poster && (
+                      <img src={entry.data.poster} alt={entry.data.title} className="w-6 h-9 object-cover rounded flex-shrink-0" />
+                    )}
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Catalog Link Broken</span>
                     <h3 className="font-semibold text-sm text-muted-foreground line-clamp-1">{entry.data.title || "Unknown Media"}</h3>
                   </div>
                   <div className="flex items-center gap-2 mt-0.5 sm:mt-1">

@@ -22,10 +22,12 @@ export async function registerRoutes(
   // Admin endpoint to save overrides for a movie
   app.patch("/api/movies/:id", async (req, res) => {
     const { id } = req.params;
-    const { customTitle, customPoster, customOverview } = req.body;
+    const { customTitle, customPoster, customOverview, tmdbLink } = req.body;
 
     try {
       const filePath = path.join(process.cwd(), "client/public/movies.json");
+      const rootFilePath = path.join(process.cwd(), "movies.json");
+      
       const data = await fs.readFile(filePath, "utf-8");
       const movies = JSON.parse(data);
 
@@ -34,14 +36,51 @@ export async function registerRoutes(
         return res.status(404).json({ error: "Movie not found" });
       }
 
-      movies[movieIndex] = {
-        ...movies[movieIndex],
+      let updatedData = {
         customTitle: customTitle || movies[movieIndex].customTitle,
         customPoster: customPoster || movies[movieIndex].customPoster,
         customOverview: customOverview || movies[movieIndex].customOverview,
       };
 
+      if (tmdbLink) {
+        try {
+          const tmdbIdMatch = tmdbLink.match(/\/(movie|tv)\/(\d+)/);
+          if (tmdbIdMatch) {
+            const type = tmdbIdMatch[1];
+            const tmdbId = tmdbIdMatch[2];
+            const apiKey = process.env.TMDB_API_KEY;
+
+            if (apiKey) {
+              const tmdbRes = await fetch(
+                `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}&language=en-US`
+              );
+              if (tmdbRes.ok) {
+                const tmdbData: any = await tmdbRes.json();
+                updatedData.customTitle = tmdbData.title || tmdbData.name;
+                updatedData.customPoster = `https://image.tmdb.org/t/p/w500${tmdbData.poster_path}`;
+                updatedData.customOverview = tmdbData.overview;
+              }
+            }
+          }
+        } catch (tmdbError) {
+          console.error("Error fetching TMDB data:", tmdbError);
+        }
+      }
+
+      movies[movieIndex] = {
+        ...movies[movieIndex],
+        ...updatedData,
+      };
+
       await fs.writeFile(filePath, JSON.stringify(movies, null, 2));
+      
+      // Also write to root movies.json if it exists to ensure persistence
+      try {
+        await fs.writeFile(rootFilePath, JSON.stringify(movies, null, 2));
+      } catch (e) {
+        console.error("Could not write to root movies.json");
+      }
+
       res.json(movies[movieIndex]);
     } catch (error) {
       console.error("Error updating movie:", error);

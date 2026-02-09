@@ -30,6 +30,7 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [customTitle, setCustomTitle] = useState(series.customTitle || "");
   const [customPoster, setCustomPoster] = useState(series.customPoster || "");
+  const [tmdbLink, setTmdbLink] = useState("");
 
   const { getTrackedData, saveTrackedData, deleteTrackedData } = useUserMedia();
   const queryClient = useQueryClient();
@@ -38,11 +39,11 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
   const safeId = series.id || `series-${index}`;
   const trackedData = getTrackedData(safeId);
 
-  const currentUser = localStorage
-    .getItem("teleflix_user")
-    ?.toLowerCase()
-    .trim();
-  const isAdmin = currentUser === "zeeshan";
+    const currentUser = localStorage
+      .getItem("teleflix_user")
+      ?.toLowerCase()
+      .trim();
+    // const isAdmin = currentUser === "zeeshan"; // Commented out to allow access
 
   const displayTitle = series.customTitle || series.title;
   const displayPoster = series.customPoster || series.poster;
@@ -129,19 +130,6 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             </div>
           )}
 
-          {/* Admin Edit Button - Visible to everyone for now */}
-          <Button
-            variant="secondary"
-            size="sm"
-            className="absolute top-2 right-12 h-8 px-2 bg-zinc-900 text-white shadow-lg border border-zinc-700 z-20 font-bold text-[10px]"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsEditDialogOpen(true);
-            }}
-          >
-            <Edit className="h-3 w-3 mr-1" />
-            EDIT
-          </Button>
 
           <div
             data-testid={`badge-episodes-${safeId}`}
@@ -189,8 +177,26 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
             </Button>
 
             <Button
+              variant="secondary"
+              size="sm"
+              className="w-full gap-1.5 sm:gap-2 h-8 sm:h-9 text-[10px] sm:text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+              data-testid={`button-edit-${safeId}`}
+            >
+              <Edit className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Edit</span>
+            </Button>
+
+            <Button
               className="w-full gap-1.5 sm:gap-2 h-8 sm:h-9 text-[10px] sm:text-xs"
               size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(true);
+              }}
               data-testid={`button-view-${safeId}`}
             >
               <Play className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -299,6 +305,15 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
                 placeholder="Paste TMDB poster URL"
               />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="tmdbLink">TMDB Link</Label>
+              <Input
+                id="tmdbLink"
+                value={tmdbLink}
+                onChange={(e) => setTmdbLink(e.target.value)}
+                placeholder="Paste TMDB URL (e.g., https://www.themoviedb.org/tv/123)"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button
@@ -313,6 +328,7 @@ export function SeriesCard({ series, index }: SeriesCardProps) {
                   customTitle,
                   customPoster,
                   customOverview: series.customOverview || "",
+                  tmdbLink,
                 })
               }
               disabled={updateMutation.isPending}

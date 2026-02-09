@@ -28,6 +28,7 @@ export function MovieCard({ movie, index }: MovieCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [customTitle, setCustomTitle] = useState(movie.customTitle || "");
   const [customPoster, setCustomPoster] = useState(movie.customPoster || "");
+  const [tmdbLink, setTmdbLink] = useState("");
 
   const { getTrackedData, saveTrackedData, deleteTrackedData } = useUserMedia();
   const queryClient = useQueryClient();
@@ -36,11 +37,11 @@ export function MovieCard({ movie, index }: MovieCardProps) {
   const safeId = movie.id || `movie-${index}`;
   const trackedData = getTrackedData(safeId);
 
-  const currentUser = localStorage
-    .getItem("teleflix_user")
-    ?.toLowerCase()
-    .trim();
-  const isAdmin = currentUser === "zeeshan";
+    const currentUser = localStorage
+      .getItem("teleflix_user")
+      ?.toLowerCase()
+      .trim();
+    // const isAdmin = currentUser === "zeeshan"; // Commented out to allow access
 
   const displayTitle = movie.customTitle || movie.title;
   const displayPoster = movie.customPoster || movie.poster;
@@ -121,19 +122,6 @@ export function MovieCard({ movie, index }: MovieCardProps) {
             </div>
           )}
 
-          {/* Admin Edit Button - Visible to everyone for now */}
-          <Button
-            variant="secondary"
-            size="sm"
-            className="absolute top-2 right-12 h-8 px-2 bg-zinc-900 text-white shadow-lg border border-zinc-700 z-20 font-bold text-[10px]"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsEditDialogOpen(true);
-            }}
-          >
-            <Edit className="h-3 w-3 mr-1" />
-            EDIT
-          </Button>
 
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
         </div>
@@ -159,11 +147,25 @@ export function MovieCard({ movie, index }: MovieCardProps) {
               variant="outline"
               size="sm"
               className="w-full gap-1.5 sm:gap-2 h-8 sm:h-9 text-[10px] sm:text-xs"
-              onClick={() => setIsDialogOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDialogOpen(true);
+              }}
               data-testid={`button-track-${safeId}`}
             >
               <ListPlus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>{trackedData ? "Update" : "Track"}</span>
+            </Button>
+
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-full gap-1.5 sm:gap-2 h-8 sm:h-9 text-[10px] sm:text-xs"
+              onClick={() => setIsEditDialogOpen(true)}
+              data-testid={`button-edit-${safeId}`}
+            >
+              <Edit className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Edit</span>
             </Button>
 
             <a
@@ -221,6 +223,15 @@ export function MovieCard({ movie, index }: MovieCardProps) {
                 placeholder="Paste TMDB poster URL"
               />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="tmdbLink">TMDB Link</Label>
+              <Input
+                id="tmdbLink"
+                value={tmdbLink}
+                onChange={(e) => setTmdbLink(e.target.value)}
+                placeholder="Paste TMDB URL (e.g., https://www.themoviedb.org/movie/123)"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button
@@ -235,6 +246,7 @@ export function MovieCard({ movie, index }: MovieCardProps) {
                   customTitle,
                   customPoster,
                   customOverview: movie.customOverview || "",
+                  tmdbLink,
                 })
               }
               disabled={updateMutation.isPending}
